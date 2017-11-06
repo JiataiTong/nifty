@@ -12,7 +12,9 @@ import android.app.Activity;
 import android.content.*;
 import android.speech.tts.TextToSpeech;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -21,6 +23,13 @@ import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.*;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import io.github.cmw025.nifty.R;
 
@@ -32,21 +41,22 @@ public class LoginActivity extends FragmentActivity
     private static final int REQ_CODE_GOOGLE_SIGNIN = 32767 / 2;
 
     private GoogleApiClient google;
-    private TextToSpeech tts;
-    private boolean isTTSinitialized;
+    private FirebaseAuth mAuth;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        // updateUI(currentUser);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        isTTSinitialized = false;
 
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                isTTSinitialized = true;
-            }
-        });
+        mAuth = FirebaseAuth.getInstance();
 
         SignInButton button = (SignInButton) findViewById(R.id.signin_button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +69,7 @@ public class LoginActivity extends FragmentActivity
         // request the user's ID, email address, and basic profile
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -76,28 +87,12 @@ public class LoginActivity extends FragmentActivity
      * It launches the Google Sign-in activity and waits for a result.
      */
     public void signInClick(View view) {
-        Toast.makeText(this, "Sign in was clicked!", Toast.LENGTH_SHORT).show();
-
-        // speak some words
-        if (isTTSinitialized) {
-            tts.speak("Hey idiot, you need to log in now. Booyah!",
-                    TextToSpeech.QUEUE_FLUSH, null);
-        }
+        // Toast.makeText(this, "Sign in was clicked!", Toast.LENGTH_SHORT).show();
 
         // connect to Google server to log in
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(google);
         startActivityForResult(intent, REQ_CODE_GOOGLE_SIGNIN);
     }
-
-    /*
-     * This method is called when the user has finished speaking from a speech-to-text action.
-     * We just display the spoken text on the screen in a text view.
-     */
-//    @Override
-//    public void onSpeechToTextReady(String spokenText) {
-//
-//        $TV(R.id.results).setText("User's favorite color is: " + spokenText);
-//    }
 
     /*
      * This method is called when Google Sign-in comes back to my activity.
@@ -112,9 +107,10 @@ public class LoginActivity extends FragmentActivity
             if (result.isSuccess()) {
                 // yay; user logged in successfully
                 GoogleSignInAccount acct = result.getSignInAccount();
-                TextView tv = (TextView) findViewById(R.id.results);
-                tv.setText("You signed in as: " + acct.getDisplayName() + " "
-                        + acct.getEmail());
+                firebaseAuthWithGoogle(acct);
+//                TextView tv = (TextView) findViewById(R.id.results);
+//                tv.setText("You signed in as: " + acct.getDisplayName() + " "
+//                        + acct.getEmail());
             } else {
                 TextView tv = (TextView) findViewById(R.id.results);
                 tv.setText("Login fail. :(");
@@ -122,40 +118,57 @@ public class LoginActivity extends FragmentActivity
         }
     }
 
-    /*
-     * Called when the Speech to Text button is clicked.
-     * Initiates a speech-to-text activity.
-     */
-    public void speechToTextClick(View view) {
-//        speechToText("Say your favorite color:");   // Stanford Android library method
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        // Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            // Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            // updateUI(user);
+                            if (user != null) {
+                                // Name, email address, and profile photo Url
+                                String name = user.getDisplayName();
+                                String email = user.getEmail();
+                                TextView tv = (TextView) findViewById(R.id.results);
+                                tv.setText("You signed in as: " + name + " "
+                                        + email);
+                                finish();
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            //Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            // Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            //        Toast.LENGTH_SHORT).show();
+                            TextView tv = (TextView) findViewById(R.id.results);
+                            tv.setText("Login fail. :(");
+                            // updateUI(null);
+                        }
+                    }
+                });
     }
 
-    /*
-     * Called when the Text to Speech button is clicked.
-     * Causes the app to speak aloud.
-     */
-    public void textToSpeechClick(View view) {
-        if (isTTSinitialized) {
-            tts.speak("Congratulations. You clicked a button, genius.",
-                    TextToSpeech.QUEUE_FLUSH, null);
-        }
-    }
 
     // this method is required for the GoogleApiClient.OnConnectionFailedListener above
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
         // log("onConnectionFailed");
     }
 
     // this method is required for the GoogleApiClient.ConnectionCallbacks above
     public void onConnected(Bundle bundle) {
-        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         // log("onConnected");
     }
 
     // this method is required for the GoogleApiClient.ConnectionCallbacks above
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
         // log("onConnectionSuspended");
     }
 }
