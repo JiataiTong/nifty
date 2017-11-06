@@ -47,10 +47,26 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar.setTabSelectedListener(new BottomNavigationBar.OnTabSelectedListener(){
             @Override
             public void onTabSelected(int position) {
+                Fragment fragment = null;
                 //start
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                // myIntent.putExtra("key", value); //Optional parameters
-                startActivity(intent);
+                switch(position) {
+                    case 0:
+                        fragment = new TaskFragment();
+                        break;
+                    case 1:
+                        fragment = new CalendarFragment();
+                        break;
+                    case 2:
+                        fragment = new CalendarFragment();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        // myIntent.putExtra("key", value); //Optional parameters
+                        startActivity(intent);
+                        break;
+                }
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.replace(R.id.contentFragment, fragment);
+                transaction.commit();
             }
             @Override
             public void onTabUnselected(int position) {

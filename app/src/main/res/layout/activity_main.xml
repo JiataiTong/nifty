@@ -10,9 +10,9 @@
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <fragment
-        android:id="@+id/frag_task"
-        android:name="io.github.cmw025.nifty.TaskFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <FrameLayout
+        android:id="@+id/contentFragment"
+        android:name="io.github.cmw025.nifty.CalendarFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 </FrameLayout>

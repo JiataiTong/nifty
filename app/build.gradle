@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    compile 'com.github.florent37:materialtextfield:1.0.7'
     compile 'me.nlmartian.silkcal:library:0.1.1'
     implementation 'com.google.firebase:firebase-auth:11.0.4'
     implementation 'com.google.firebase:firebase-database:11.0.4'
