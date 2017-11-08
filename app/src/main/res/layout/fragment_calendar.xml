@@ -19,7 +19,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1.05">
+        android:layout_weight="0.8">
 
         <TextView
             android:id="@+id/date"
@@ -82,16 +82,24 @@
             xmlns:weight="http://schemas.android.com/tools"
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#2a63ADC7">
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_calendar"
                 style="@style/myRecyclerViewStyle"
+                android:padding="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
         </FrameLayout>
 
     </FrameLayout>
+    <com.ashokvarma.bottomnavigation.BottomNavigationBar
+        android:layout_gravity="bottom"
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

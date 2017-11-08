@@ -2,6 +2,7 @@ package io.github.cmw025.nifty;
 
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -10,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.style.RelativeSizeSpan;
@@ -22,7 +24,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -124,10 +128,16 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         dragMgr.setInitiateOnMove(false);
         dragMgr.setInitiateOnLongPress(true);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+        LinearLayoutManager mgr = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(mgr);
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(new TaskFragment.MyAdapter()));
+        // recyclerView.setAdapter(dragMgr.createWrappedAdapter(arrayAdapter);
 
         dragMgr.attachRecyclerView(recyclerView);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                mgr.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
 
@@ -223,7 +233,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
             mItems = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
-                mItems.add(new TaskFragment.MyItem(i, "Item " + i));
+                mItems.add(new TaskFragment.MyItem(i, "Task " + i));
             }
         }
 
