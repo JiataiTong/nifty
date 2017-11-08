@@ -1,46 +1,97 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="io.github.cmw025.nifty.CalendarFragment">
-
-    <me.nlmartian.silkcal.DayPickerView
-        xmlns:calendar="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/calendar_view"
-        android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:background="@android:color/white"
-        calendar:drawRoundRect="false"/>
-
-    <LinearLayout
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px" />
-
-    <com.github.florent37.materialtextfield.MaterialTextField
+    <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:mtf_labelColor="#166"
-        app:mtf_image="@drawable/edit"
-        app:mtf_cardCollapsedHeight="4dp"
-        app:mtf_openKeyboardOnFocus="true"
-        app:mtf_animationDuration="200"
-        android:layout_gravity="center"
-        >
+        android:textStyle="bold"
+        app:ms_background_color="#63ADC7"
+        app:ms_text_color="#FAFAFA"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:fontFamily="sans-serif-thin"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.05">
 
-        <EditText
-            android:id="@+id/add_task"
+        <TextView
+            android:id="@+id/date"
+            android:layout_margin="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Add New..."
-            android:textColor="#333"
-            android:textSize="15sp"
-            android:inputType="text"
-            android:imeOptions="actionSend"
-            android:singleLine="true" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="hola!"
+            android:textSize="16sp"
+            android:gravity="bottom|center"
+            android:layout_marginTop="30dp"
+            android:paddingTop="30sp"
+            android:textColor="#63ADC7"
+            />
 
-    </com.github.florent37.materialtextfield.MaterialTextField>
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:mcv_selectionColor="#9fff1234"
+            app:mcv_showOtherDates="none"
+            app:mcv_tileHeight="32dp"
+            app:mcv_tileWidth="53dp" />
 
-</FrameLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:orientation="vertical">
+        <!--<com.github.florent37.materialtextfield.MaterialTextField-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:mtf_labelColor="#166"-->
+            <!--app:mtf_image="@drawable/edit"-->
+            <!--app:mtf_cardCollapsedHeight="4dp"-->
+            <!--app:mtf_openKeyboardOnFocus="true"-->
+            <!--app:mtf_animationDuration="200"-->
+            <!--android:layout_gravity="top">-->
+
+            <!--<EditText-->
+                <!--android:id="@+id/add_task"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="top"-->
+                <!--android:hint="Add New..."-->
+                <!--android:textColor="#333"-->
+                <!--android:textSize="15sp"-->
+                <!--android:inputType="text"-->
+                <!--android:imeOptions="actionSend"-->
+                <!--android:singleLine="true" />-->
+
+        <!--</com.github.florent37.materialtextfield.MaterialTextField>-->
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:weight="http://schemas.android.com/tools"
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_calendar"
+                style="@style/myRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+
+</LinearLayout>

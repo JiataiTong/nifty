@@ -20,6 +20,9 @@ android {
 }
 
 dependencies {
+    compile ('com.weiwangcn.betterspinner:library-material:1.1.0')
+    compile 'com.jaredrummler:material-spinner:1.2.1'
+    compile 'com.prolificinteractive:material-calendarview:1.4.3'
     compile 'com.github.florent37:materialtextfield:1.0.7'
     compile 'me.nlmartian.silkcal:library:0.1.1'
     implementation 'com.google.firebase:firebase-auth:11.0.4'

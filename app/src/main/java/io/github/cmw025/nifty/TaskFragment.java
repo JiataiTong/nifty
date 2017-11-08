@@ -89,7 +89,7 @@ public class TaskFragment extends Fragment {
             setHasStableIds(true); // this is required for D&D feature.
 
             mItems = new ArrayList<>();
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 20; i++) {
                 mItems.add(new MyItem(i, "Item " + i));
             }
         }
