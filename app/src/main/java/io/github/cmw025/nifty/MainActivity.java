@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 //start
                 switch(position) {
                     case 0:
-                        fragment = new TaskFragment();
+                        fragment = new ListFragment();
                         break;
                     case 1:
                         fragment = new CalendarFragment();

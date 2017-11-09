@@ -1,4 +1,5 @@
-package io.github.cmw025.nifty;/*
+package io.github.cmw025.nifty;
+/*
  * CS 193A, Winter 2017, Marty Stepp
  * This activity is a small demonstration of adding Google Sign-in to an Android app.
  * It is tricky to set up, but this gives us the powerful feature of allowing logins
