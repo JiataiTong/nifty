@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
        Copyright (C) 2015 Haruki Hasegawa
 
        Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,10 @@
        limitations under the License.
 -->
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="list_item_elevation">2dp</dimen>
-    <dimen name="list_item_height">55dp</dimen>
-    <dimen name="list_item2_height">96dp</dimen>
-    <dimen name="list_group_item_height">96dp</dimen>
-    <dimen name="list_group_item_with_add_remove_buttons_height">108dp</dimen>
-    <dimen name="listview_item_minumum_height">48dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <style name="commonListItemStyle">
+        <item name="android:elevation">@dimen/list_item_elevation</item>
+        <item name="android:outlineProvider">bounds</item>
+    </style>
+
 </resources>

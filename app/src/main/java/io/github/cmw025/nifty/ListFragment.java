@@ -40,12 +40,9 @@ public class ListFragment extends Fragment {
         // Setup item onClick listener
         RecyclerViewClickListener listener = (view, position) -> {
             Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(getAc)
+            Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+            getActivity().startActivity(intent);
         };
-
-        // Setup expandable feature and RecyclerView
-        RecyclerViewExpandableItemManager expMgr = new RecyclerViewExpandableItemManager(null);
-
 
         // Setup D&D feature and RecyclerView
         RecyclerViewDragDropManager dragMgr = new RecyclerViewDragDropManager();
@@ -57,13 +54,12 @@ public class ListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        recyclerView.setAdapter(expMgr.createWrappedAdapter(dragMgr.createWrappedAdapter(new RecyclerViewAdapter(listener))));
+        recyclerView.setAdapter(dragMgr.createWrappedAdapter(new RecyclerViewAdapter(listener)));
 
         // NOTE: need to disable change animations to ripple effect work properly
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         dragMgr.attachRecyclerView(recyclerView);
-        expMgr.attachRecyclerView(recyclerView);
 
         return v;
     }
