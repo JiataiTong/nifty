@@ -86,9 +86,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         //calendarView.setTopbarVisible(false);
         decorator = new TodayDecorator();
         calendarView.addDecorator(decorator);
-//        calendarView.setController(this);
-//        calendarView = (DayPickerView) activity.findViewById(R.id.calendarView);
-//        calendarView.setController(this);
+
         MaterialSpinner spinner = (MaterialSpinner) activity.findViewById(R.id.spinner);
 
         String[] plants = new String[]{

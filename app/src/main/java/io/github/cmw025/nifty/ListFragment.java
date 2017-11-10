@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -52,8 +53,14 @@ public class ListFragment extends Fragment {
 
         RecyclerView recyclerView =  (RecyclerView) v.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager mgr = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mgr);
 
+        // Divider decoration
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), mgr.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        // Set Adapter
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(new RecyclerViewAdapter(listener)));
 
         // NOTE: need to disable change animations to ripple effect work properly
