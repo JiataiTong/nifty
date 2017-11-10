@@ -53,47 +53,12 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="top"
-        android:orientation="vertical">
-        <!--<com.github.florent37.materialtextfield.MaterialTextField-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:mtf_labelColor="#166"-->
-            <!--app:mtf_image="@drawable/edit"-->
-            <!--app:mtf_cardCollapsedHeight="4dp"-->
-            <!--app:mtf_openKeyboardOnFocus="true"-->
-            <!--app:mtf_animationDuration="200"-->
-            <!--android:layout_gravity="top">-->
-
-            <!--<EditText-->
-                <!--android:id="@+id/add_task"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:hint="Add New..."-->
-                <!--android:textColor="#333"-->
-                <!--android:textSize="15sp"-->
-                <!--android:inputType="text"-->
-                <!--android:imeOptions="actionSend"-->
-                <!--android:singleLine="true" />-->
-
-        <!--</com.github.florent37.materialtextfield.MaterialTextField>-->
-
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:weight="http://schemas.android.com/tools"
-            android:id="@+id/container"
+        android:orientation="vertical"
+        android:background="#2a63ADC7">
+        <fragment android:name="io.github.cmw025.nifty.ListFragment"
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#2a63ADC7">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_calendar"
-                style="@style/myRecyclerViewStyle"
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-
-        </FrameLayout>
+            android:layout_height="match_parent" />
 
     </FrameLayout>
     <com.ashokvarma.bottomnavigation.BottomNavigationBar

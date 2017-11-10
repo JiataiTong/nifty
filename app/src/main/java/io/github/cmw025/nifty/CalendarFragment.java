@@ -58,9 +58,6 @@ import me.nlmartian.silkcal.DayPickerView;
 import me.nlmartian.silkcal.SimpleMonthAdapter;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class CalendarFragment extends Fragment implements OnDateSelectedListener {
 
     // private DayPickerView calendarView;
@@ -103,7 +100,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_textview_align);
         spinner.setAdapter(spinnerArrayAdapter);
 
-
 //        EditText editText = (EditText) activity.findViewById(R.id.add_task);
 //        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
@@ -118,26 +114,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //            }
 //        });
 
-        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view_calendar);
-
-        // Setup D&D feature and RecyclerView
-        RecyclerViewDragDropManager dragMgr = new RecyclerViewDragDropManager();
-
-        dragMgr.setInitiateOnMove(false);
-        dragMgr.setInitiateOnLongPress(true);
-
-        LinearLayoutManager mgr = new LinearLayoutManager(activity);
-        recyclerView.setLayoutManager(mgr);
-        recyclerView.setAdapter(dragMgr.createWrappedAdapter(new TaskFragment.MyAdapter()));
-        // recyclerView.setAdapter(dragMgr.createWrappedAdapter(arrayAdapter);
-
-        dragMgr.attachRecyclerView(recyclerView);
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                mgr.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
-        new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
+        // new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
 
     }
 
@@ -200,90 +177,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         public void decorate(DayViewFacade view) {
             view.setBackgroundDrawable(backgroundDrawable);
             //view.addSpan(new DotSpan(5, color));
-        }
-    }
-
-
-    static class MyItem {
-        public final long id;
-        public final String text;
-
-        public MyItem(long id, String text) {
-            this.id = id;
-            this.text = text;
-        }
-    }
-
-    static class MyViewHolder extends AbstractDraggableItemViewHolder {
-        TextView textView;
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(android.R.id.text1);
-        }
-    }
-
-    static class MyAdapter extends RecyclerView.Adapter<TaskFragment.MyViewHolder> implements DraggableItemAdapter<TaskFragment.MyViewHolder> {
-        List<TaskFragment.MyItem> mItems;
-
-        public MyAdapter() {
-            setHasStableIds(true); // this is required for D&D feature.
-
-            mItems = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                mItems.add(new TaskFragment.MyItem(i, "Task " + i));
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return mItems.get(position).id; // need to return stable (= not change even after reordered) value
-        }
-
-        @Override
-        public TaskFragment.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_minimal, parent, false);
-            return new TaskFragment.MyViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(TaskFragment.MyViewHolder holder, int position) {
-            TaskFragment.MyItem item = mItems.get(position);
-            holder.textView.setText(item.text);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mItems.size();
-        }
-
-        @Override
-        public void onMoveItem(int fromPosition, int toPosition) {
-            TaskFragment.MyItem movedItem = mItems.remove(fromPosition);
-            mItems.add(toPosition, movedItem);
-        }
-
-        @Override
-        public boolean onCheckCanStartDrag(TaskFragment.MyViewHolder holder, int position, int x, int y) {
-            return true;
-        }
-
-        @Override
-        public ItemDraggableRange onGetItemDraggableRange(TaskFragment.MyViewHolder holder, int position) {
-            return null;
-        }
-
-        @Override
-        public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
-            return true;
-        }
-
-        @Override
-        public void onItemDragStarted(int position) {
-        }
-
-        @Override
-        public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
         }
     }
 
