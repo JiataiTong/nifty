@@ -2,10 +2,7 @@ package io.github.cmw025.nifty;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +26,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     public void goBack(View view) {
         finish();
+        overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
 
 }

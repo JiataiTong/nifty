@@ -35,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        // Default fragment to list
+        Fragment fragment = new ListFragment();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.contentFragment, fragment);
+        transaction.commit();
+
         // BottomNavigationBar
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
 
@@ -57,16 +64,17 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CalendarFragment();
                         break;
                     case 2:
-                        fragment = new CalendarFragment();
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(MainActivity.this, ProjectActivity.class);
                         // myIntent.putExtra("key", value); //Optional parameters
                         startActivity(intent);
                         break;
                 }
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction transaction = fm.beginTransaction();
-                transaction.replace(R.id.contentFragment, fragment);
-                transaction.commit();
+                if (fragment != null) {
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction transaction = fm.beginTransaction();
+                    transaction.replace(R.id.contentFragment, fragment);
+                    transaction.commit();
+                }
             }
             @Override
             public void onTabUnselected(int position) {

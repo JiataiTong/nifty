@@ -1,9 +1,7 @@
 package io.github.cmw025.nifty;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,18 +11,8 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
-import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
-import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
-
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class ListFragment extends Fragment {
@@ -37,7 +25,9 @@ public class ListFragment extends Fragment {
         RecyclerViewClickListener listener = (view, position) -> {
             // Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-            getActivity().startActivity(intent);
+            Activity activity = getActivity();
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
         };
 
         // Setup D&D feature and RecyclerView
