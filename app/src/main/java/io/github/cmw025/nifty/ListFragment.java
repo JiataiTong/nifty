@@ -13,6 +13,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,25 +23,19 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class ListFragment extends Fragment {
 
-    public ListFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_demo_minimal, container, false);
+        View v = inflater.inflate(R.layout.fragment_list, container, false);
         // Setup item onClick listener
         RecyclerViewClickListener listener = (view, position) -> {
-            Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
             getActivity().startActivity(intent);
         };
