@@ -20,6 +20,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void addMembers(View view) {
         Intent intent = new Intent (this, AddMemberActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }
 
     public void setDue(View view) {}

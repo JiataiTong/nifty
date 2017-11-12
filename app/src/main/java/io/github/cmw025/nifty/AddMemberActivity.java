@@ -1,5 +1,7 @@
 package io.github.cmw025.nifty;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -46,5 +48,6 @@ public class AddMemberActivity extends AppCompatActivity {
     }
     public void goBack(View view) {
         finish();
+        overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
 }
