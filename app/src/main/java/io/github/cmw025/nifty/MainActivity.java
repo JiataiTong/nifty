@@ -1,9 +1,9 @@
 package io.github.cmw025.nifty;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Default fragment to list
         Fragment fragment = new ListFragment();
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.contentFragment, fragment);
         transaction.commit();
@@ -64,13 +64,14 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CalendarFragment();
                         break;
                     case 2:
-                        Intent intent = new Intent(MainActivity.this, ProjectActivity.class);
+                        fragment = new ProjectListFragment();
+                        // Intent intent = new Intent(MainActivity.this, ProjectActivity.class);
                         // myIntent.putExtra("key", value); //Optional parameters
-                        startActivity(intent);
+                        // startActivity(intent);
                         break;
                 }
                 if (fragment != null) {
-                    FragmentManager fm = getFragmentManager();
+                    FragmentManager fm = getSupportFragmentManager();
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.replace(R.id.contentFragment, fragment);
                     transaction.commit();

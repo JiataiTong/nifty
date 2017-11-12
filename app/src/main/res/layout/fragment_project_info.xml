@@ -1,10 +1,11 @@
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/content"
-android:layout_width="match_parent"
-android:layout_height="match_parent" >
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 <TextView style="?android:textAppearanceMedium"
+    android:layout_margin="50dp"
     android:padding="16dp"
     android:lineSpacingMultiplier="1.2"
     android:layout_width="match_parent"

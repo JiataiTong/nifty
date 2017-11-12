@@ -1,12 +1,38 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.github.cmw025.nifty.ProjectListFragment">
-
-    <TextView
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    tools:context="io.github.cmw025.nifty.ProjectListFragment"
+    android:orientation="vertical"
+    android:background="#2a63ADC7">
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:background="#63ADC7">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end">
+            <ImageView
+                android:paddingEnd="20dp"
+                android:paddingRight="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                android:contentDescription="Add" />
+            />
+        </LinearLayout>
 
-</FrameLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <it.gmariotti.cardslib.library.view.CardListView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/myList"
+        xmlns:card="http://schemas.android.com/tools"
+        card:list_card_layout_resourceID="@layout/example"/>
+
+</LinearLayout>

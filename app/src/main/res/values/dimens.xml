@@ -25,4 +25,6 @@
     <dimen name="list_group_item_with_add_remove_buttons_height">108dp</dimen>
     <dimen name="listview_item_minumum_height">48dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
 </resources>

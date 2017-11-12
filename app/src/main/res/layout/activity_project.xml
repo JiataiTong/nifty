@@ -5,5 +5,12 @@
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.github.cmw025.nifty.ProjectActivity">
+    tools:context="io.github.cmw025.nifty.ProjectActivity"
+    android:background="@color/bg_swipe_group_item_pinned">
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
+
 </android.support.constraint.ConstraintLayout>

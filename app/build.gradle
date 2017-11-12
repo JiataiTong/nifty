@@ -24,6 +24,21 @@ android {
 }
 
 dependencies {
+    compile 'me.relex:circleindicator:1.2.2@aar'
+    //Core
+    compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'
+
+    //Optional for built-in cards
+    compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.1.0'
+
+    //Optional for RecyclerView
+    compile 'com.github.gabrielemariotti.cards:cardslib-recyclerview:2.1.0'
+
+    //Optional for staggered grid view
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-staggeredgrid:2.1.0'
+
+    //Optional for drag and drop
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-dragdrop:2.1.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:design:26.1.0'
     compile('com.weiwangcn.betterspinner:library-material:1.1.0')
