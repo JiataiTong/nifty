@@ -99,7 +99,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         );
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_textview_align);
         spinner.setAdapter(spinnerArrayAdapter);
-
+//
 //        EditText editText = (EditText) activity.findViewById(R.id.add_task);
 //        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override

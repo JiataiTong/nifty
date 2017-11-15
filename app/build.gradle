@@ -24,6 +24,8 @@ android {
 }
 
 dependencies {
+
+    // Circile indicator
     compile 'me.relex:circleindicator:1.2.2@aar'
     //Core
     compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'

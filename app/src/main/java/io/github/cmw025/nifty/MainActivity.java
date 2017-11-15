@@ -12,6 +12,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.cmw025.nifty.R;
@@ -28,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
         // FireBase Sign In if necessary
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
+
+        //DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        //fb.child("name").setValue(123);
+        //Firebase ayy = fb.child("name");
+
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);

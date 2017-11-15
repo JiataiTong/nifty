@@ -22,9 +22,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
         setHasStableIds(true); // this is required for D&D feature.
 
         mItems = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            mItems.add(new MyItem(i, "Item " + i));
-        }
+//        for (int i = 0; i < 5; i++) {
+//            mItems.add(new MyItem(i, "Item " + i));
+//        }
         mListener = listener;
     }
 
@@ -44,11 +44,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
     public void onBindViewHolder(RowViewHolder holder, int position) {
         MyItem item = mItems.get(position);
         holder.textView.setText(item.text);
-
-        if (holder instanceof RowViewHolder) {
-            RowViewHolder rowHolder = (RowViewHolder) holder;
-            //set values of data here
-        }
+//
+//        if (holder instanceof RowViewHolder) {
+//            RowViewHolder rowHolder = (RowViewHolder) holder;
+//            //set values of data here
+//        }
 
 
     }
@@ -85,6 +85,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
 
     @Override
     public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+    }
+
+    public void addItem( MyItem item) {
+        mItems.add(item);
+        notifyItemInserted(mItems.size());
     }
 
     static class MyItem {
