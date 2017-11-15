@@ -7,56 +7,37 @@
     android:layout_height="match_parent"
     android:gravity="top">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/fragment_note_title_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="#63ADC7"
-        app:contentInsetLeft="0dp"
-        app:contentInsetStart="0dp"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        app:errorEnabled="true"
+        app:hintEnabled="false"
+        android:background="#959faf">
+        <android.support.design.widget.TextInputEditText
+            android:textColor="#FFFFFF"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:id="@+id/fragment_note_title"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:orientation="horizontal"
-            android:showDividers="end"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_arrow_back_white_24dp"
-                android:paddingStart="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingEnd="16dp"
-                android:layout_gravity="left"
-                android:onClick="goBack"/>
-            <EditText
-                android:id="@+id/toolbar_save"
-                style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:gravity="center_vertical|start"
-                android:textAlignment="textStart"
-                android:text="Title of Task"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:inputType="textNoSuggestions"
-                android:imeOptions="actionDone"
-                android:freezesText="true" />
-
-        </LinearLayout>
-    </android.support.v7.widget.Toolbar>
-
+            android:layout_height="wrap_content"
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"
+            android:hint="Title of the Task Goes Here"
+            android:textColorHint="#FFFFFF"
+            android:freezesText="true"/>
+    </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:background="@android:color/transparent"
         android:textAllCaps="false"
         android:layout_width="match_parent"
@@ -64,55 +45,88 @@
         android:textAlignment="textStart"
         android:layout_gravity="start"
         android:freezesText="true"
-        android:drawableStart="@drawable/ic_person_add_black_24dp"
-        android:drawableLeft="@drawable/ic_person_add_black_24dp"
-        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/team"
+        android:drawableLeft="@drawable/team"
         android:text="Member"
         android:onClick="addMembers"/>
-
-    <Button
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:background="@android:color/transparent"
-        android:textAllCaps="false"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="textStart"
-        android:layout_gravity="start"
-        android:freezesText="true"
-        android:drawableStart="@drawable/timer"
-        android:drawableLeft="@drawable/timer"
-        android:drawablePadding="10dp"
-        android:text="Due"
-        android:onClick="setDue"/>
+        android:orientation="horizontal">
+        <Button
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@android:color/transparent"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:layout_gravity="start"
+            android:freezesText="true"
+            android:drawableStart="@drawable/timer"
+            android:drawableLeft="@drawable/timer"
+            android:text="Due"
+            android:id="@+id/dateChoose"
+            android:onClick="setDue"/>
+
+        <TextView
+            android:id="@+id/dateDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" "/>
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:id="@+id/radioGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:onClick="status"
+            android:id="@+id/inprog"
+            android:text="in progress"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:onClick="status"
+            android:id="@+id/finished"
+            android:text="finished"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/notebook_texture1">
-        <ImageView
+        android:orientation="vertical"
+        android:background="@drawable/notebook_texture1"
+        android:onClick="editText">
+
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:hint="task contents"
+            android:singleLine="false"/>
+
+
+        <TextView
+            android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="30dp"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:paddingRight="5dp"
-            android:paddingEnd="5dp"
-            android:src="@drawable/ic_mode_edit_black_24dp"/>
-        <EditText
-            android:id="@+id/details"
-            android:textAllCaps="false"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="35dp"
-            android:gravity="top|start"
-            android:hint="Edit text here!"
-            android:freezesText="true"
-            android:background="@android:color/transparent"
-            />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            tools:context=".Test02Activity" />
+
     </LinearLayout>
 
 
