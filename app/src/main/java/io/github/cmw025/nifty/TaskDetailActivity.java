@@ -37,7 +37,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
 
-        tv = (TextView) findViewById(R.id.details);
+        tv = (TextView) findViewById(R.id.edit_text);
         btn = (Button) findViewById(R.id.dateChoose);
         dateDisplay = (TextView) findViewById(R.id.dateChoose);
 
