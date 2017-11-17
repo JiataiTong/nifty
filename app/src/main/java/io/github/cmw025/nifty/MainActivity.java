@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
 
+
         //DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         //fb.child("name").setValue(123);
         //Firebase ayy = fb.child("name");

@@ -115,6 +115,7 @@ public class LoginActivity extends FragmentActivity
             } else {
                 TextView tv = (TextView) findViewById(R.id.results);
                 tv.setText("Login fail. :(");
+                finish();
             }
         }
     }
