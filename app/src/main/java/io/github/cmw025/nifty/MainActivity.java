@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         //DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         //fb.child("name").setValue(123);
-        //Firebase ayy = fb.child("name");
+        //DatabaseReference ayy = fb.child("name");
 
 
         FirebaseUser currentUser = mAuth.getCurrentUser();

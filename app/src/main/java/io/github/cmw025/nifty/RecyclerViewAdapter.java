@@ -92,6 +92,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
         notifyItemInserted(mItems.size());
     }
 
+    public void updateItems(List<MyItem> newList) {
+        mItems = newList;
+        notifyDataSetChanged();
+    }
+
     static class MyItem {
         public final long id;
         public final String text;
