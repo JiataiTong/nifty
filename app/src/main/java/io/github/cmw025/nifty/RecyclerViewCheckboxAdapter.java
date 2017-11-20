@@ -29,6 +29,12 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
         this.mContext = context;
 
     }
+
+    public void updateItems(ArrayList<DataModel> newData) {
+        dataSet = newData;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return dataSet.size();

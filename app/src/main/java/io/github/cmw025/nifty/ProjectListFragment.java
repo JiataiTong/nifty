@@ -107,7 +107,7 @@ public class ProjectListFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot data) {
                 ArrayList<Card> cards = new ArrayList<>();
-                for (DataSnapshot child: data.getChildren()) {
+                for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
                     Log.v("fb", child.getKey() + ": " + project.getName());
 
@@ -119,7 +119,7 @@ public class ProjectListFragment extends Fragment {
                             String key = child.getKey();
 
                             Intent intent = new Intent(getActivity(), ProjectActivity.class);
-                            intent.putExtra("projectID", key); //Optional parameters
+                            intent.putExtra("projectFireBaseID", key);
                             getActivity().startActivity(intent);
                         }
                     });
@@ -148,7 +148,7 @@ public class ProjectListFragment extends Fragment {
                 DatabaseReference ref = fb.child("projects").child(uid).push();
                 ref.setValue(project);
                 String key = ref.getKey();
-                fb.child("usrs").child(uid).child("projects").push().setValue(key);
+                fb.child("usrs").child(uid).child("projects").child(key).setValue(true);
             }
         });
 

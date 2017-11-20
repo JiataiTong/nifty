@@ -47,6 +47,9 @@ public class TaskDetailActivity extends AppCompatActivity {
     private String taskFireBaseKey;
     private long taskListID;
     private DatabaseReference taskRef;
+    private String projectFireBaseID;
+
+    private ArrayList<String> currentMembers;
 
 
     @Override
@@ -81,10 +84,23 @@ public class TaskDetailActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
 
+        taskRef.child("project").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                projectFireBaseID = (String) data.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 TaskModel task = data.getValue(TaskModel.class);
+
                 taskName.post(new Runnable(){
                     @Override
                     public void run() {
@@ -111,6 +127,22 @@ public class TaskDetailActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        // Get who are already on the task
+        taskRef.child("members").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                currentMembers = new ArrayList<>();
+                for (DataSnapshot child : data.getChildren()) {
+                    currentMembers.add(child.getKey());
+                }
             }
 
             @Override
@@ -182,6 +214,8 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     public void addMembers(View view) {
         Intent intent = new Intent (this, AddMemberActivity.class);
+        intent.putExtra("projectFireBaseID", projectFireBaseID);
+        intent.putStringArrayListExtra("currentMembers", currentMembers);
         startActivity(intent);
         overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }

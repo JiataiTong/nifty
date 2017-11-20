@@ -142,9 +142,17 @@ public class ListFragment extends Fragment {
                                 // Add task to FireBase
                                 ref.setValue(task);
                                 fb.child("usrs").child(uid).child("tasks").child(key).setValue(true);
+
+                                DatabaseReference projectRef = fb.child("projects").child(uid).push();
+                                String projectKey = projectRef.getKey();
+                                projectRef.setValue(task);
+                                ref.child("project").setValue(projectKey);
+
+                                projectRef.child("members").child(uid).setValue(true);
+
+                                // Reset toDo to empty string
                                 toDo.setText("");
                             }
-                            //fb.child("usrs").child("projects").push().setValue(key);
                             return false; // consume.
                         }
                         return false; // pass on to other listeners.
