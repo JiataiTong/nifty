@@ -10,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -123,26 +124,26 @@ public class ListFragment extends Fragment {
                                 event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             String title = toDo.getText().toString();
-                            //RecyclerViewAdapter.MyItem item = new RecyclerViewAdapter.MyItem(0, text);
-                            //adapter.addItem(item);
+                            if (!TextUtils.isEmpty(title)) {
+                                //RecyclerViewAdapter.MyItem item = new RecyclerViewAdapter.MyItem(0, text);
+                                //adapter.addItem(item);
 //                            Task task = new Task();
 //                            task.setTitle(text);
 //                            task.setProject() // Which project is this?
 
-                            // Get reference to "fb/tasks/uid/new_entry"
-                            DatabaseReference ref = fb.child("tasks").child(uid).push();
-                            String key = ref.getKey();
+                                // Get reference to "fb/tasks/uid/new_entry"
+                                DatabaseReference ref = fb.child("tasks").child(uid).push();
+                                String key = ref.getKey();
 
-                            // Create TaskModel
-                            long id = longHash(key);
-                            TaskModel task = new TaskModel(title, "", id, key);
+                                // Create TaskModel
+                                long id = longHash(key);
+                                TaskModel task = new TaskModel(title, "", id, key);
 
-                            // Add task to RecyclerView
-                            adapter.addItem(task);
-
-                            // Add task to Firebase
-                            ref.setValue(task);
-                            fb.child("usrs").child(uid).child("tasks").child(key).setValue(true);
+                                // Add task to FireBase
+                                ref.setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(key).setValue(true);
+                                toDo.setText("");
+                            }
                             //fb.child("usrs").child("projects").push().setValue(key);
                             return false; // consume.
                         }
