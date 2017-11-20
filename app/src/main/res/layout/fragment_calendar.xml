@@ -61,11 +61,6 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-    <com.ashokvarma.bottomnavigation.BottomNavigationBar
-        android:layout_gravity="bottom"
-        android:id="@+id/bottom_navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>
