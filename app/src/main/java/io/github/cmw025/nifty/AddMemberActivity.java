@@ -51,8 +51,10 @@ public class AddMemberActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot data) {
                 for (DataSnapshot child : data.getChildren()) {
-                    String name = child.getKey();
-                    boolean alreadyOnTask = currentMembers.contains(name);
+                    String id = child.getKey();
+                    boolean alreadyOnTask = currentMembers.contains(id);
+
+                    String name = (String) child.getValue();
                     DataModel member = new DataModel(name, alreadyOnTask);
                     dataModels.add(member);
                 }

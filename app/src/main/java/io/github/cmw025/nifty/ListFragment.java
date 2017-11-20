@@ -133,22 +133,34 @@ public class ListFragment extends Fragment {
 
                                 // Get reference to "fb/tasks/uid/new_entry"
                                 DatabaseReference ref = fb.child("tasks").child(uid).push();
-                                String key = ref.getKey();
+                                String taskKey = ref.getKey();
 
                                 // Create TaskModel
-                                long id = longHash(key);
-                                TaskModel task = new TaskModel(title, "", id, key);
+                                long id = longHash(taskKey);
+                                TaskModel task = new TaskModel(title, "", id, taskKey);
 
                                 // Add task to FireBase
                                 ref.setValue(task);
-                                fb.child("usrs").child(uid).child("tasks").child(key).setValue(true);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(true);
 
                                 DatabaseReference projectRef = fb.child("projects").child(uid).push();
                                 String projectKey = projectRef.getKey();
-                                projectRef.setValue(task);
+                                projectRef.child(taskKey).setValue(task);
                                 ref.child("project").setValue(projectKey);
 
-                                projectRef.child("members").child(uid).setValue(true);
+
+                                fb.child("usrs").child(uid).child("name").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot data) {
+                                        String name = (String) data.getValue();
+                                        projectRef.child("members").child(uid).setValue(name);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
 
                                 // Reset toDo to empty string
                                 toDo.setText("");
