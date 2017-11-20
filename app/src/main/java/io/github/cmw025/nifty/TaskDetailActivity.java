@@ -19,7 +19,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class TaskDetailActivity extends AppCompatActivity {
 
@@ -31,18 +42,23 @@ public class TaskDetailActivity extends AppCompatActivity {
     private EditText editText;
     private TextView mTextView;
 
+    // Unique FireBase ID for this task
+    private String taskID;
+    private EditText taskName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
 
+        taskName = (EditText) findViewById(R.id.fragment_note_title);
+
         tv = (TextView) findViewById(R.id.edit_text);
         btn = (Button) findViewById(R.id.dateChoose);
         dateDisplay = (TextView) findViewById(R.id.dateChoose);
 
         btn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 showDialog(DATE_DIALOG);
@@ -56,6 +72,42 @@ public class TaskDetailActivity extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.edit_text);
         mTextView = (TextView) findViewById(R.id.textview);
         editText.addTextChangedListener(mTextWatcher);
+
+        // Set up FireBase
+        Intent intent = getIntent();
+        taskID = intent.getStringExtra("taskID");
+        // Log.v("fb", "After activity transition, the key of the item clicked: " + taskID);
+
+        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        String uid = user.getUid();
+        DatabaseReference taskRef = fb.child("tasks").child(uid).child(taskID);
+
+        taskRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                TaskModel task = data.getValue(TaskModel.class);
+                taskName.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        taskName.setText(task.getName());
+                    }
+                });
+                editText.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        editText.setText(task.getContent());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     TextWatcher mTextWatcher = new TextWatcher() {

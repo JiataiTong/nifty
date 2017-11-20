@@ -7,6 +7,11 @@ import java.util.Date;
  */
 
 public class TaskModel implements Comparable<TaskModel> {
+    // Stable ID required for Drag & Drop of RecyclerView
+    private long id;
+    // FireBase ID
+    private String key;
+
     private String content;
     private Date startDate;
     private Date dueDate;
@@ -15,15 +20,19 @@ public class TaskModel implements Comparable<TaskModel> {
     private String name;
     private Date finishDate;
 
-    public TaskModel(String name, String content, Date startDate, Date dueDate){
+    public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key){
         this.name = name;
         this.content = content;
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.finished = false;
         //this.index = index;
+        this.id = id;
+        this.key = key;
     }
 
+    // Empty constructor for Firebase
+    public TaskModel() {}
 
     //getters
     public boolean isFinished() {
@@ -55,6 +64,14 @@ public class TaskModel implements Comparable<TaskModel> {
             return this.finishDate;
         }
         return null;
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public String getKey() {
+        return this.key;
     }
 
 

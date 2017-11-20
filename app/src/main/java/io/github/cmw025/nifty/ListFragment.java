@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -41,14 +41,6 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-        // Setup item onClick listener
-        RecyclerViewClickListener listener = (view, position) -> {
-            // Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-            Activity activity = getActivity();
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
-        };
 
         // Setup D&D feature and RecyclerView
         RecyclerViewDragDropManager dragMgr = new RecyclerViewDragDropManager();
@@ -66,10 +58,10 @@ public class ListFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         // Set Adapter
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(listener);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
 
-        // Firebase
+        // Set up FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -79,11 +71,11 @@ public class ListFragment extends Fragment {
         tasks.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                List<RecyclerViewAdapter.MyItem> list = new ArrayList<>();
+                List<TaskModel> list = new ArrayList<>();
                 for (DataSnapshot child: data.getChildren()) {
-                    Task task = child.getValue(Task.class);
-                    Log.v("fb", child.getKey() + ": " + task.title);
-                    list.add(new RecyclerViewAdapter.MyItem(0, task.title));
+                    TaskModel task = child.getValue(TaskModel.class);
+                    // Log.v("fb", child.getKey() + ": " + task.getName());
+                    list.add(task);
                 }
                 adapter.updateItems(list);
             }
@@ -93,9 +85,6 @@ public class ListFragment extends Fragment {
 
             }
         });
-
-
-
 //        Query query = fb.child("usrs").child(uid).child("tasks");
 //        Query query = FirebaseDatabase.getInstance()
 //                .getReference()
@@ -122,6 +111,7 @@ public class ListFragment extends Fragment {
 
 
         // Set add item listener
+        // Set up EditText add-task listener
         EditText toDo = ((EditText)v.findViewById(R.id.add_todo));
         toDo.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
@@ -132,17 +122,28 @@ public class ListFragment extends Fragment {
                                 event == null ||
                                 event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                            String text = toDo.getText().toString();
-                            RecyclerViewAdapter.MyItem item = new RecyclerViewAdapter.MyItem(0, text);
-                            adapter.addItem(item);
-
-                            Task task = new Task();
-                            task.setTitle(text);
+                            String title = toDo.getText().toString();
+                            //RecyclerViewAdapter.MyItem item = new RecyclerViewAdapter.MyItem(0, text);
+                            //adapter.addItem(item);
+//                            Task task = new Task();
+//                            task.setTitle(text);
 //                            task.setProject() // Which project is this?
+
+                            // Get reference to "fb/tasks/uid/new_entry"
                             DatabaseReference ref = fb.child("tasks").child(uid).push();
-                            ref.setValue(task);
                             String key = ref.getKey();
-                            fb.child("usrs").child(uid).child("tasks").push().setValue(key);
+
+                            // Create TaskModel
+                            Date date = new Date();
+                            long id = longHash(key);
+                            TaskModel task = new TaskModel(title, "", date, date, id, key);
+
+                            // Add task to RecyclerView
+                            adapter.addItem(task);
+
+                            // Add task to Firebase
+                            ref.setValue(task);
+                            fb.child("usrs").child(uid).child("tasks").child(key).setValue(true);
                             //fb.child("usrs").child("projects").push().setValue(key);
                             return false; // consume.
                         }
@@ -159,19 +160,31 @@ public class ListFragment extends Fragment {
         return v;
     }
 
+    // Helper function to create RecyclerView ID from task FireBase ID
+    private static long longHash(String string) {
+        long h = 98764321261L;
+        int l = string.length();
+        char[] chars = string.toCharArray();
 
-    private static class Task {
-        private String title;
-        public Task () {}
-
-        public void setTitle(String title) {
-            this.title = title;
+        for (int i = 0; i < l; i++) {
+            h = 31 * h + chars[i];
         }
-
-        public String getTitle() {
-            return this.title;
-        }
+        return h;
     }
+
+//
+//    private static class Task {
+//        private String title;
+//        public Task () {}
+//
+//        public void setTitle(String title) {
+//            this.title = title;
+//        }
+//
+//        public String getTitle() {
+//            return this.title;
+//        }
+//    }
 //
 //    private class TaskHolder extends RecyclerView.ViewHolder {
 //

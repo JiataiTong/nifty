@@ -1,56 +1,48 @@
 package io.github.cmw025.nifty;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> implements DraggableItemAdapter<RowViewHolder> {
-    List<MyItem> mItems;
-    private RecyclerViewClickListener mListener;
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowViewHolder> implements DraggableItemAdapter<RecyclerViewAdapter.RowViewHolder> {
+    List<TaskModel> mItems;
 
-    public RecyclerViewAdapter(RecyclerViewClickListener listener) {
+    public RecyclerViewAdapter() {
         setHasStableIds(true); // this is required for D&D feature.
-
         mItems = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            mItems.add(new MyItem(i, "Item " + i));
-//        }
-        mListener = listener;
     }
 
     @Override
     public long getItemId(int position) {
-        return mItems.get(position).id; // need to return stable (= not change even after reordered) value
+        return mItems.get(position).getId(); // need to return stable (= not change even after reordered) value
     }
 
     @Override
     public RowViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View v = LayoutInflater.from(context).inflate(R.layout.list_item_minimal, parent, false);
-        return new RowViewHolder(v, mListener);
+        return new RowViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(RowViewHolder holder, int position) {
-        MyItem item = mItems.get(position);
-        holder.textView.setText(item.text);
-//
-//        if (holder instanceof RowViewHolder) {
-//            RowViewHolder rowHolder = (RowViewHolder) holder;
-//            //set values of data here
-//        }
-
-
+        TaskModel item = mItems.get(position);
+        holder.textView.setText(item.getName());
     }
 
     @Override
@@ -60,7 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
 
     @Override
     public void onMoveItem(int fromPosition, int toPosition) {
-        MyItem movedItem = mItems.remove(fromPosition);
+        TaskModel movedItem = mItems.remove(fromPosition);
         mItems.add(toPosition, movedItem);
     }
 
@@ -87,23 +79,47 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RowViewHolder> imp
     public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
     }
 
-    public void addItem( MyItem item) {
+    public void addItem( TaskModel item) {
         mItems.add(item);
         notifyItemInserted(mItems.size());
     }
 
-    public void updateItems(List<MyItem> newList) {
+    public void updateItems(List<TaskModel> newList) {
         mItems = newList;
         notifyDataSetChanged();
     }
+//
+//    static class MyItem {
+//        public final long id;
+//        public final String text;
+//
+//        public MyItem(long id, String text) {
+//            this.id = id;
+//            this.text = text;
+//        }
+//    }
 
-    static class MyItem {
-        public final long id;
-        public final String text;
+    class RowViewHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
 
-        public MyItem(long id, String text) {
-            this.id = id;
-            this.text = text;
+        TextView textView;
+
+        RowViewHolder(View v) {
+            super(v);
+            v.setOnClickListener(this);
+            textView = itemView.findViewById(android.R.id.text1);
+        }
+
+        @Override
+        public void onClick(View view) {
+            TaskModel clickedTask = mItems.get(getAdapterPosition());
+            Activity activity = (Activity) view.getContext();
+            String key = clickedTask.getKey();
+            // Log.v("fb", "The key of the item clicked: " + key);
+
+            Intent intent = new Intent(activity, TaskDetailActivity.class);
+            intent.putExtra("taskID", key);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
         }
     }
 }
