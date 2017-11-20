@@ -1,38 +1,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
-    tools:context="io.github.cmw025.nifty.ProjectListFragment"
+    android:background="#2a63ADC7"
     android:orientation="vertical"
-    android:background="#2a63ADC7">
+    tools:context="io.github.cmw025.nifty.ProjectListFragment">
+
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#63ADC7">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="end">
+
             <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:contentDescription="Add"
                 android:paddingEnd="20dp"
                 android:paddingRight="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Add" />
+                android:src="@drawable/ic_add_white_24dp" />
             />
         </LinearLayout>
 
 
     </android.support.v7.widget.Toolbar>
 
-    <it.gmariotti.cardslib.library.view.CardListView
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <include layout="@layout/list_card_undo_material_message" />
+    
+    <it.gmariotti.cardslib.library.view.CardListView xmlns:card="http://schemas.android.com/tools"
         android:id="@+id/myList"
-        xmlns:card="http://schemas.android.com/tools"
-        card:list_card_layout_resourceID="@layout/example"/>
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        card:list_card_layout_resourceID="@layout/example" />
+
+
+
+
 
 </LinearLayout>
