@@ -2,15 +2,12 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="110dp">
-
-    <ImageView
-        android:layout_gravity="center_vertical"
-        android:layout_margin="40dp"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/today_circle_background"/>
+    android:layout_height="100dp"
+    android:background="@drawable/gradient"
+    >
     <TextView
+        android:textStyle="bold"
+        android:textColor="#2874A6"
         android:layout_gravity="center"
         android:textAlignment="center"
         android:layout_width="match_parent"
@@ -18,5 +15,7 @@
         android:fontFamily="sans-serif-smallcaps "
         android:textSize="30dp"
         android:text="Nifty"/>
+
+
 
 </FrameLayout>

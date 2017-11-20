@@ -20,11 +20,14 @@ import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.CardViewNative;
+import it.gmariotti.cardslib.library.view.listener.UndoBarController;
+import it.gmariotti.cardslib.library.view.listener.dismiss.DefaultDismissableManager;
+import it.gmariotti.cardslib.library.view.listener.dismiss.Dismissable;
 
 public class ProjectListFragment extends Fragment {
 
 
-    private CardListView  mListView;
+    private CardListView mListView;
     private CardArrayAdapter mCardArrayAdapter;
 
 
@@ -47,10 +50,16 @@ public class ProjectListFragment extends Fragment {
 
         //Init an array of Cards
         ArrayList<Card> cards = new ArrayList<Card>();
+
+        //new Card(getContext());
+
+
         for (int i = 0; i < 7; i++) {
 
 
             Card card = new Card(this.getActivity(), R.layout.example);
+            card.setType(2);
+            card.setSwipeable(true);
             //CardHeader header = new CardHeader(getContext());
             //header.setTitle("Damn");
             //card.addCardHeader(header);
@@ -59,7 +68,7 @@ public class ProjectListFragment extends Fragment {
             // card.setCount(i);
 
             //Card must have a stable Id.
-            card.setId("a"+i);
+            card.setId("a" + i);
             card.setOnClickListener(new Card.OnCardClickListener() {
                 @Override
                 public void onClick(Card card, View view) {
@@ -68,18 +77,56 @@ public class ProjectListFragment extends Fragment {
                 }
             });
 
+            card.setOnSwipeListener(new Card.OnSwipeListener(){
+                public void onSwipe(Card card){
+
+                }
+            });
+
+            card.setOnUndoSwipeListListener(new Card.OnUndoSwipeListListener() {
+                @Override
+                public void onUndoSwipe(Card card) {
+
+                }
+            });
+
             cards.add(card);
         }
 
 
+
         //Set the adapter
         mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+        mCardArrayAdapter.setEnableUndo(true);
+        mCardArrayAdapter.setInnerViewTypeCount(3);
 
         mListView = (CardListView) getActivity().findViewById(R.id.myList);
         if (mListView != null) {
             mListView.setAdapter(mCardArrayAdapter);
         }
+        mCardArrayAdapter.setDismissable(new RightDismissableManager());
+        mCardArrayAdapter.setEnableUndo(true);
+
+        if (mListView!=null){
+            mListView.setAdapter(mCardArrayAdapter);
+        }
+
+
+
     }
+
+    public class RightDismissableManager extends DefaultDismissableManager {
+
+        @Override
+        public SwipeDirection getSwipeDirectionAllowed() {
+            return SwipeDirection.LEFT;
+        }
+
+    }
+
+
+
+
 
 //    //-------------------------------------------------------------------------------------------------------------
 //    // Animations. (these method aren't used in this demo, but they can be called to enable the animations)
@@ -152,3 +199,4 @@ public class ProjectListFragment extends Fragment {
 //    }
 
 }
+
