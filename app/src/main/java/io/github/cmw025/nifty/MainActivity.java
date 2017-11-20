@@ -30,18 +30,29 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
 
+<<<<<<< HEAD
 
         //DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         //fb.child("name").setValue(123);
         //Firebase ayy = fb.child("name");
 
 
+=======
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             // myIntent.putExtra("key", value); //Optional parameters
             startActivity(intent);
         }
+
+        // Save user profile to FireBase
+        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        String uid = currentUser.getUid();
+        DatabaseReference profile = fb.child("usrs").child(uid);
+        profile.child("name").setValue(currentUser.getDisplayName());
+        profile.child("email").setValue(currentUser.getEmail());
+        profile.child("phone").setValue(currentUser.getPhoneNumber());
 
         // Default fragment to list
         Fragment fragment = new ListFragment();

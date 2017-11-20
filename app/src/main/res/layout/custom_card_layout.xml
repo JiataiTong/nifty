@@ -2,9 +2,20 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+<<<<<<< HEAD
     android:layout_height="100dp"
     android:background="@drawable/gradient"
     >
+=======
+    android:layout_height="120dp">
+
+    <ImageView
+        android:layout_gravity="center_vertical"
+        android:layout_margin="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/today_circle_background"/>
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
     <TextView
         android:textStyle="bold"
         android:textColor="#2874A6"

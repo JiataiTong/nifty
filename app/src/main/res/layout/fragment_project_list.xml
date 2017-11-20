@@ -18,9 +18,13 @@
             android:gravity="end">
 
             <ImageView
+<<<<<<< HEAD
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:contentDescription="Add"
+=======
+                android:id="@+id/add_project"
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
                 android:paddingEnd="20dp"
                 android:paddingRight="20dp"
                 android:src="@drawable/ic_add_white_24dp" />

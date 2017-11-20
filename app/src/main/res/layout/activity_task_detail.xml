@@ -70,9 +70,16 @@
         android:text="Member"
         android:onClick="addMembers"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <Button
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:background="@android:color/transparent"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:orientation="horizontal">
         <Button
             android:paddingLeft="20dp"
@@ -99,6 +106,16 @@
             android:text=" "/>
 
     </LinearLayout>
+=======
+        android:textAlignment="textStart"
+        android:layout_gravity="start"
+        android:freezesText="true"
+        android:drawableStart="@drawable/timer"
+        android:drawableLeft="@drawable/timer"
+        android:drawablePadding="10dp"
+        android:text="Due"
+        android:id="@+id/dateChoose" />
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
 
 
     <RadioGroup
@@ -127,31 +144,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/notebook_texture1"
-        android:onClick="editText">
+        android:background="@drawable/notebook_texture1">
 
 
         <EditText
+<<<<<<< HEAD
             android:id="@+id/edit_text"
             android:layout_height="wrap_content"
+=======
+            android:paddingLeft="40dp"
+            android:id="@+id/task_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
             android:imeOptions="actionSearch"
             android:hint="task contents"
             android:singleLine="false"
             android:textAllCaps="false"
+<<<<<<< HEAD
             android:layout_width="match_parent"
+=======
+>>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
             android:paddingTop="35dp"
             android:gravity="top|start"
             android:freezesText="true"
             android:background="@android:color/transparent"/>
 
 
-        <TextView
-            android:id="@+id/textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            tools:context=".Test02Activity" />
+        <!--<TextView-->
+            <!--android:paddingLeft="40dp"-->
+            <!--android:id="@+id/textview"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--tools:context=".Test02Activity" />-->
 
     </LinearLayout>
 
