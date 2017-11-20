@@ -15,6 +15,7 @@
             android:layout_height="match_parent"
             android:gravity="end">
             <ImageView
+                android:id="@+id/add_project"
                 android:paddingEnd="20dp"
                 android:paddingRight="20dp"
                 android:layout_width="wrap_content"

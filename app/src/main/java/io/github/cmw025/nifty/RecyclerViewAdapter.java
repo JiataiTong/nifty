@@ -113,11 +113,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public void onClick(View view) {
             TaskModel clickedTask = mItems.get(getAdapterPosition());
             Activity activity = (Activity) view.getContext();
-            String key = clickedTask.getKey();
             // Log.v("fb", "The key of the item clicked: " + key);
 
             Intent intent = new Intent(activity, TaskDetailActivity.class);
-            intent.putExtra("taskID", key);
+            intent.putExtra("taskFireBaseKey", clickedTask.getKey());
+            intent.putExtra("taskListID", clickedTask.getId());
             activity.startActivity(intent);
             activity.overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
         }

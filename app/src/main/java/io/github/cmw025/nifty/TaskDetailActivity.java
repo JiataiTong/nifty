@@ -30,21 +30,23 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TaskDetailActivity extends AppCompatActivity {
 
-    private TextView tv;
     int mYear, mMonth, mDay;
-    Button btn;
-    TextView dateDisplay;
     final int DATE_DIALOG = 1;
-    private EditText editText;
-    private TextView mTextView;
+
+    private Button dueButton;
+    private EditText taskContent;
+    private EditText taskName;
+    // private TextView mTextView;
 
     // Unique FireBase ID for this task
-    private String taskID;
-    private EditText taskName;
+    private String taskFireBaseKey;
+    private long taskListID;
+    private DatabaseReference taskRef;
 
 
     @Override
@@ -53,12 +55,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_detail);
 
         taskName = (EditText) findViewById(R.id.fragment_note_title);
+        taskContent = (EditText) findViewById(R.id.task_content);
 
-        tv = (TextView) findViewById(R.id.edit_text);
-        btn = (Button) findViewById(R.id.dateChoose);
-        dateDisplay = (TextView) findViewById(R.id.dateChoose);
-
-        btn.setOnClickListener(new View.OnClickListener() {
+        dueButton = (Button) findViewById(R.id.dateChoose);
+        dueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(DATE_DIALOG);
@@ -69,20 +69,17 @@ public class TaskDetailActivity extends AppCompatActivity {
         mYear = ca.get(Calendar.YEAR);
         mMonth = ca.get(Calendar.MONTH);
         mDay = ca.get(Calendar.DAY_OF_MONTH);
-        editText = (EditText) findViewById(R.id.edit_text);
-        mTextView = (TextView) findViewById(R.id.textview);
-        editText.addTextChangedListener(mTextWatcher);
+        // mTextView = (TextView) findViewById(R.id.textview);
+        // taskContent.addTextChangedListener(mTextWatcher);
 
         // Set up FireBase
         Intent intent = getIntent();
-        taskID = intent.getStringExtra("taskID");
-        // Log.v("fb", "After activity transition, the key of the item clicked: " + taskID);
+        taskFireBaseKey = intent.getStringExtra("taskFireBaseKey");
+        taskListID = intent.getLongExtra("taskListID", 0);
 
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        String uid = user.getUid();
-        DatabaseReference taskRef = fb.child("tasks").child(uid).child(taskID);
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
 
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -94,10 +91,10 @@ public class TaskDetailActivity extends AppCompatActivity {
                         taskName.setText(task.getName());
                     }
                 });
-                editText.post(new Runnable(){
+                taskContent.post(new Runnable(){
                     @Override
                     public void run() {
-                        editText.setText(task.getContent());
+                        taskContent.setText(task.getContent());
                     }
                 });
             }
@@ -110,41 +107,40 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     }
 
-    TextWatcher mTextWatcher = new TextWatcher() {
-        private CharSequence temp;
-        private int editStart;
-        private int editEnd;
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO Auto-generated method stub
-            temp = s;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // TODO Auto-generated method stub
-            editStart = editText.getSelectionStart();
-            editEnd = editText.getSelectionEnd();
-            mTextView.setText(temp.length() + " letters input");
-            if (temp.length() > 2000) {
-                Toast.makeText(TaskDetailActivity.this,
-                        "the note is too long!", Toast.LENGTH_SHORT)
-                        .show();
-                s.delete(editStart - 1, editEnd);
-                int tempSelection = editStart;
-                editText.setText(s);
-                editText.setSelection(tempSelection);
-            }
-        }
-    };
-
+//    TextWatcher mTextWatcher = new TextWatcher() {
+//        private CharSequence temp;
+//        private int editStart;
+//        private int editEnd;
+//
+//        @Override
+//        public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            // TODO Auto-generated method stub
+//            temp = s;
+//        }
+//
+//        @Override
+//        public void beforeTextChanged(CharSequence s, int start, int count,
+//                                      int after) {
+//            // TODO Auto-generated method stub
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable s) {
+//            // TODO Auto-generated method stub
+//            editStart = taskContent.getSelectionStart();
+//            editEnd = taskContent.getSelectionEnd();
+//            mTextView.setText(temp.length() + " letters input");
+//            if (temp.length() > 2000) {
+//                Toast.makeText(TaskDetailActivity.this,
+//                        "the note is too long!", Toast.LENGTH_SHORT)
+//                        .show();
+//                s.delete(editStart - 1, editEnd);
+//                int tempSelection = editStart;
+//                taskContent.setText(s);
+//                taskContent.setSelection(tempSelection);
+//            }
+//        }
+//    };
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -155,7 +151,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     public void display() {
-        dateDisplay.setText(new StringBuffer().append(mMonth + 1).append("-").append(mDay).append("-").append(mYear).append(" "));
+        dueButton.setText(new StringBuffer().append(mMonth + 1).append("-").append(mDay).append("-").append(mYear).append(" "));
     }
 
     private DatePickerDialog.OnDateSetListener mdateListener = new DatePickerDialog.OnDateSetListener() {
@@ -170,38 +166,11 @@ public class TaskDetailActivity extends AppCompatActivity {
         }
     };
 
-
-
     public void addMembers(View view) {
         Intent intent = new Intent (this, AddMemberActivity.class);
         startActivity(intent);
         overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }
-
-    public void editText(View view) {
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(TaskDetailActivity.this, String.valueOf(actionId), Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-    }
-
-    public void setDue(View view){
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG);
-            }
-        });
-
-        final Calendar ca = Calendar.getInstance();
-        mYear = ca.get(Calendar.YEAR);
-        mMonth = ca.get(Calendar.MONTH);
-        mDay = ca.get(Calendar.DAY_OF_MONTH);
-    }
-
 
     public void status(View view){
         int id = view.getId();
@@ -211,6 +180,10 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     public void goBack(View view) {
+        // Update changed to FireBase
+        Date date = new Date(); // Dummy date to be changed to match calendar later
+        TaskModel newTask = new TaskModel(taskName.getText().toString(), taskContent.getText().toString(), date, date, taskListID, taskFireBaseKey);
+        taskRef.setValue(newTask);
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
