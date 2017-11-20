@@ -91,10 +91,24 @@ public class TaskDetailActivity extends AppCompatActivity {
                         taskName.setText(task.getName());
                     }
                 });
+
                 taskContent.post(new Runnable(){
                     @Override
                     public void run() {
                         taskContent.setText(task.getContent());
+                    }
+                });
+
+                dueButton.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        Date date = task.getDueDate();
+                        if (date != null) {
+                            mYear = date.getYear() + 1900;
+                            mMonth = date.getMonth();
+                            mDay = date.getDate();
+                            display();
+                        }
                     }
                 });
             }
@@ -181,7 +195,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     public void goBack(View view) {
         // Update changed to FireBase
-        Date date = new Date(); // Dummy date to be changed to match calendar later
+        Date date = new Date(mYear - 1900, mMonth, mDay);
         TaskModel newTask = new TaskModel(taskName.getText().toString(), taskContent.getText().toString(), date, date, taskListID, taskFireBaseKey);
         taskRef.setValue(newTask);
         finish();

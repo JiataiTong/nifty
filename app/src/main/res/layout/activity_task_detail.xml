@@ -115,15 +115,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/notebook_texture1"
-        android:onClick="editText">
+        android:background="@drawable/notebook_texture1">
 
 
         <EditText
             android:paddingLeft="40dp"
             android:id="@+id/task_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:imeOptions="actionSearch"
             android:hint="task contents"
             android:singleLine="false"

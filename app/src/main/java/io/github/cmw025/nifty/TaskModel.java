@@ -34,6 +34,14 @@ public class TaskModel implements Comparable<TaskModel> {
     // Empty constructor for Firebase
     public TaskModel() {}
 
+    public TaskModel(String name, String content, long id, String key){
+        this.name = name;
+        this.content = content;
+        this.finished = false;
+        this.id = id;
+        this.key = key;
+    }
+
     //getters
     public boolean isFinished() {
         return this.finished;

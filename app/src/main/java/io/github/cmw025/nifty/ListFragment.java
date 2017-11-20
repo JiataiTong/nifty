@@ -134,9 +134,8 @@ public class ListFragment extends Fragment {
                             String key = ref.getKey();
 
                             // Create TaskModel
-                            Date date = new Date();
                             long id = longHash(key);
-                            TaskModel task = new TaskModel(title, "", date, date, id, key);
+                            TaskModel task = new TaskModel(title, "", id, key);
 
                             // Add task to RecyclerView
                             adapter.addItem(task);
