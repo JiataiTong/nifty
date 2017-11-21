@@ -148,5 +148,4 @@
         <item name="android:text">@string/list_card_undo_title</item>
     </style>
 
-
 </resources>

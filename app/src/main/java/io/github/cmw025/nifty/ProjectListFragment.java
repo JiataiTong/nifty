@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,45 +33,66 @@ import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.CardViewNative;
-import it.gmariotti.cardslib.library.view.listener.UndoBarController;
-import it.gmariotti.cardslib.library.view.listener.dismiss.DefaultDismissableManager;
 import it.gmariotti.cardslib.library.view.listener.dismiss.Dismissable;
 
 public class ProjectListFragment extends Fragment {
 
 
-    private CardListView mListView;
+    private CardListView  mListView;
     private CardArrayAdapter mCardArrayAdapter;
     private DatabaseReference fb;
     private String uid;
+    private Button deletepro;
+    private String projectid;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_project_list, container, false);
+
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initCard();
+        //initCard();
         initFirebase();
         initAddButton();
+        initDeletButton();
+
+    }
+
+    private void initDeletButton() {
+        deletepro = getActivity().findViewById(R.id.deletepr);
+        deletepro.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                deleteProject(projectid);
+            }
+        });
+    }
+
+    private void deleteProject(String projectid) {
+        DatabaseReference proj = FirebaseDatabase.getInstance().getReference("Project").child("index");
+        DatabaseReference task = FirebaseDatabase.getInstance().getReference("task").child("index")
+
     }
 
     /**
      * This method builds a simple list of cards
      */
-    private void initCard() {
+    //private void initCard() {
 
-<<<<<<< HEAD
         //Init an array of Cards
-        ArrayList<Card> cards = new ArrayList<Card>();
+    //    ArrayList<Card> cards = new ArrayList<Card>();
 
         //new Card(getContext());
 
 
-        for (int i = 0; i < 7; i++) {
+       /* for (int i = 0; i < 7; i++) {
 
 
             Card card = new Card(this.getActivity(), R.layout.example);
@@ -89,42 +112,35 @@ public class ProjectListFragment extends Fragment {
                 public void onClick(Card card, View view) {
                     Intent intent = new Intent(getActivity(), ProjectActivity.class);
                     getActivity().startActivity(intent);
-=======
-//        //Init an array of Cards
-//        ArrayList<Card> cards = new ArrayList<>();
-//        for (int i = 0; i < 7; i++) {
-//
-//
-//            Card card = new Card(this.getActivity(), R.layout.example);
-//            //CardHeader header = new CardHeader(getContext());
-//            //header.setTitle("Damn");
-//            //card.addCardHeader(header);
-//            //card.setTitle("" + i);
-//            // card.setSecondaryTitle("Simple text..." + i);
-//            // card.setCount(i);
-//
-//            //Card must have a stable Id.
-//            card.setId("a"+i);
-//            card.setOnClickListener(new Card.OnCardClickListener() {
-//                @Override
-//                public void onClick(Card card, View view) {
-//                    Intent intent = new Intent(getActivity(), ProjectActivity.class);
-//                    getActivity().startActivity(intent);
-//                }
-//            });
-//
-//            cards.add(card);
-//        }
-//
-//
-//        //Set the adapter
-//        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-//
-//        mListView = (CardListView) getActivity().findViewById(R.id.myList);
-//        if (mListView != null) {
-//            mListView.setAdapter(mCardArrayAdapter);
-//        }
-    }
+
+                }
+            });
+        }*/
+       /*
+//Set the adapter
+        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+
+        mListView = (CardListView) getActivity().findViewById(R.id.myList);
+        if (mListView != null) {
+            mListView.setAdapter(mCardArrayAdapter);
+        }
+        //Set the adapter
+        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+        mCardArrayAdapter.setEnableUndo(true);
+        mCardArrayAdapter.setInnerViewTypeCount(3);
+
+        mListView = (CardListView) getActivity().findViewById(R.id.myList);
+        if (mListView != null) {
+            mListView.setAdapter(mCardArrayAdapter);
+        }
+        mCardArrayAdapter.setDismissable(new RightDismissableManager());
+        mCardArrayAdapter.setEnableUndo(true);
+
+        if (mListView != null) {
+            mListView.setAdapter(mCardArrayAdapter);
+        }
+
+    }*/
 
     public void initFirebase() {
         // Firebase
@@ -143,7 +159,7 @@ public class ProjectListFragment extends Fragment {
                     Log.v("fb", child.getKey() + ": " + project.getName());
 
                     Card card = new Card(getActivity(), R.layout.example);
-                    card.setId("a");
+                    card.setId(child.getKey());
                     card.setOnClickListener(new Card.OnCardClickListener() {
                         @Override
                         public void onClick(Card card, View view) {
@@ -155,67 +171,43 @@ public class ProjectListFragment extends Fragment {
                         }
                     });
                     cards.add(card);
->>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
                 }
+
+               /* mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+
+                mListView = (CardListView) getActivity().findViewById(R.id.myList);
+                if (mListView != null) {
+                    mListView.setAdapter(mCardArrayAdapter);
+                }
+                //Set the adapter
+                mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+                mCardArrayAdapter.setEnableUndo(true);
+                mCardArrayAdapter.setInnerViewTypeCount(3);
+
+                mListView = (CardListView) getActivity().findViewById(R.id.myList);
+                if (mListView != null) {
+                    mListView.setAdapter(mCardArrayAdapter);
+                }
+                mCardArrayAdapter.setDismissable(new RightDismissableManager());
+                mCardArrayAdapter.setEnableUndo(true);
+
+                if (mListView != null) {
+                    mListView.setAdapter(mCardArrayAdapter);
+                }
+                */
+
                 CardListView listview = (CardListView) getActivity().findViewById(R.id.myList);
                 listview.setAdapter(new CardArrayAdapter(getActivity(), cards));
             }
 
-<<<<<<< HEAD
-            card.setOnSwipeListener(new Card.OnSwipeListener(){
-                public void onSwipe(Card card){
 
-                }
-            });
-
-            card.setOnUndoSwipeListListener(new Card.OnUndoSwipeListListener() {
-                @Override
-                public void onUndoSwipe(Card card) {
-
-                }
-            });
-
-            cards.add(card);
-        }
-=======
             @Override
             public void onCancelled(DatabaseError databaseError) {
->>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
 
             }
         });
     }
 
-<<<<<<< HEAD
-
-        //Set the adapter
-        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-        mCardArrayAdapter.setEnableUndo(true);
-        mCardArrayAdapter.setInnerViewTypeCount(3);
-
-        mListView = (CardListView) getActivity().findViewById(R.id.myList);
-        if (mListView != null) {
-            mListView.setAdapter(mCardArrayAdapter);
-        }
-        mCardArrayAdapter.setDismissable(new RightDismissableManager());
-        mCardArrayAdapter.setEnableUndo(true);
-
-        if (mListView!=null){
-            mListView.setAdapter(mCardArrayAdapter);
-        }
-
-
-
-    }
-
-    public class RightDismissableManager extends DefaultDismissableManager {
-
-        @Override
-        public SwipeDirection getSwipeDirectionAllowed() {
-            return SwipeDirection.LEFT;
-        }
-
-=======
     public void initAddButton() {
         ImageView button = getActivity().findViewById(R.id.add_project);
         button.setOnClickListener(new View.OnClickListener() {
@@ -232,12 +224,24 @@ public class ProjectListFragment extends Fragment {
             }
         });
 
->>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
     }
 
+    private class RightDismissableManager implements Dismissable {
+        @Override
+        public boolean isDismissable(int position, Card card) {
+            return false;
+        }
 
+        @Override
+        public SwipeDirection getSwipeDirectionAllowed() {
+            return SwipeDirection.LEFT;
+        }
 
+        @Override
+        public void setAdapter(Adapter adapter) {
 
+        }
+    }
 
 //    //-------------------------------------------------------------------------------------------------------------
 //    // Animations. (these method aren't used in this demo, but they can be called to enable the animations)
@@ -310,4 +314,3 @@ public class ProjectListFragment extends Fragment {
 //    }
 
 }
-

@@ -18,13 +18,13 @@
             android:gravity="end">
 
             <ImageView
-<<<<<<< HEAD
+
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:contentDescription="Add"
-=======
+
                 android:id="@+id/add_project"
->>>>>>> ccd7209a86d7ee6482060fef3297e775fd14e16a
+
                 android:paddingEnd="20dp"
                 android:paddingRight="20dp"
                 android:src="@drawable/ic_add_white_24dp" />
@@ -34,7 +34,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <include layout="@layout/list_card_undo_material_message" />
     
     <it.gmariotti.cardslib.library.view.CardListView xmlns:card="http://schemas.android.com/tools"
         android:id="@+id/myList"
@@ -42,6 +41,8 @@
         android:layout_height="100dp"
         android:layout_weight="1"
         card:list_card_layout_resourceID="@layout/example" />
+
+    <include layout="@layout/list_card_undo_material_message" />
 
 
 

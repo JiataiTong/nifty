@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "95273199651-n2bttsutmo00c0c16vtvobvglsm80lqa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.cmw025.nifty",
+            "certificate_hash": "4e23d94567f87091f589787dd81c1cbc709c76fb"
+          }
+        },
+        {
           "client_id": "95273199651-ehbnn76eckaescdbpri13de9l777p7f6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
