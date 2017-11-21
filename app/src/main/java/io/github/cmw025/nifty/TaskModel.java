@@ -1,6 +1,11 @@
 package io.github.cmw025.nifty;
 
+import com.google.android.gms.tasks.Task;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by troytong on 2017/11/9.
@@ -46,10 +51,6 @@ public class TaskModel implements Comparable<TaskModel> {
     public boolean isFinished() {
         return this.finished;
     }
-
-//    public int getIndex() {
-//        return this.index;
-//    }
 
     public Date getStartDate() {
         return this.startDate;

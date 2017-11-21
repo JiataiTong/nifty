@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,18 +15,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.DataModel;
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class AddMemberActivity extends AppCompatActivity {
 
-    ArrayList<DataModel> dataModels;
+    ArrayList<MemberModel> memberModels;
     ListView listView;
     private RecyclerViewCheckboxAdapter adapter;
-    private String ProjectFireBaseID;
-    private ArrayList<String> currentMembers;
+    private String projectFireBaseID;
+    private String taskFireBaseKey;
+    private HashSet<MemberModel> currentMembers;
     private DatabaseReference projectRef;
     private DatabaseReference taskRef;
 
@@ -35,30 +39,29 @@ public class AddMemberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_member);
 
         // Set up list adapter
-        dataModels = new ArrayList();
-        adapter = new RecyclerViewCheckboxAdapter(dataModels, getApplicationContext());
+        memberModels = new ArrayList();
+        adapter = new RecyclerViewCheckboxAdapter(memberModels, getApplicationContext());
 
-        ProjectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
-        currentMembers = getIntent().getStringArrayListExtra("currentMembers");
+        projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
+        taskFireBaseKey = getIntent().getStringExtra("taskFireBaseKey");
+        currentMembers = (HashSet<MemberModel>) getIntent().getSerializableExtra("currentMembers");
 
         // Set up FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        projectRef = fb.child("projects").child(uid).child(ProjectFireBaseID);
+        projectRef = fb.child("projects").child(uid).child(projectFireBaseID);
+        taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
 
         // Get project member list
         projectRef.child("members").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 for (DataSnapshot child : data.getChildren()) {
-                    String id = child.getKey();
-                    boolean alreadyOnTask = currentMembers.contains(id);
-
-                    String name = (String) child.getValue();
-                    DataModel member = new DataModel(name, alreadyOnTask);
-                    dataModels.add(member);
+                    MemberModel member = child.getValue(MemberModel.class);
+                    boolean alreadyOnTask = currentMembers.contains(member);
+                    memberModels.add(member);
                 }
-                adapter.updateItems(dataModels);
+                adapter.updateItems(memberModels);
             }
 
             @Override
@@ -68,23 +71,37 @@ public class AddMemberActivity extends AppCompatActivity {
         });
 
         listView = (ListView) findViewById(R.id.listView);
-
-//        dataModels.add(new DataModel("Jimmy Wei", false));
-//        dataModels.add(new DataModel("Sonia", false));
-//        dataModels.add(new DataModel("GWW", false));
-//        dataModels.add(new DataModel("Troy Tong", true));
-
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id) {
-                DataModel dataModel= dataModels.get(position);
-                dataModel.checked = !dataModel.checked;
+                RecyclerViewCheckboxAdapter.MemberModel clickedMember= memberModels.get(position);
+                clickedMember.checked = !clickedMember.checked;
+                if (clickedMember.checked ) {
+                    currentMembers.add(clickedMember);
+                    String name = clickedMember.getName();
+                    // Log.v("member: ", name + " checked");
+                }
+                else {
+                    currentMembers.remove(clickedMember);
+                    String name = clickedMember.getName();
+                    // Log.v("member: ", name + " unchecked");
+                }
                 adapter.notifyDataSetChanged();
             }
         });
     }
+
+    public void updateFireBase() {
+        for (MemberModel member : currentMembers) {
+            String name = member.getName();
+            // Log.v("member name: ", name);
+            taskRef.child("members").child(member.getUid()).setValue(member);
+        }
+    }
+
     public void goBack(View view) {
+        updateFireBase();
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }

@@ -32,8 +32,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 
 public class ListFragment extends Fragment {
@@ -78,6 +81,7 @@ public class ListFragment extends Fragment {
                     // Log.v("fb", child.getKey() + ": " + task.getName());
                     list.add(task);
                 }
+                Collections.reverse(list);
                 adapter.updateItems(list);
             }
 
@@ -153,7 +157,8 @@ public class ListFragment extends Fragment {
                                     @Override
                                     public void onDataChange(DataSnapshot data) {
                                         String name = (String) data.getValue();
-                                        projectRef.child("members").child(uid).setValue(name);
+                                        MemberModel member = new MemberModel(name, true, uid);
+                                        projectRef.child("members").child(uid).setValue(member);
                                     }
 
                                     @Override
