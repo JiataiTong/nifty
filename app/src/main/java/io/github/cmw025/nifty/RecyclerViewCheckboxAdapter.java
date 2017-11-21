@@ -3,22 +3,26 @@ package io.github.cmw025.nifty;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Set;
 
 
 public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
-    private ArrayList<DataModel> dataSet;
-    Context mContext;
+    private ArrayList<MemberModel> dataSet;
+    private Context mContext;
 
     // View lookup cache
-    private static class ViewHolder {
+    private class ViewHolder {
         TextView txtName;
         CheckBox checkBox;
     }
@@ -27,10 +31,9 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
         super(context, R.layout.list_item_checkbox, data);
         this.dataSet = data;
         this.mContext = context;
-
     }
 
-    public void updateItems(ArrayList<DataModel> newData) {
+    public void updateItems(ArrayList<MemberModel> newData) {
         dataSet = newData;
         notifyDataSetChanged();
     }
@@ -41,7 +44,7 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
     }
 
     @Override
-    public DataModel getItem(int position) {
+    public MemberModel getItem(int position) {
         return dataSet.get(position);
     }
 
@@ -53,12 +56,12 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
         final View result;
 
         if (convertView == null) {
-            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_checkbox, parent, false);
+            viewHolder = new ViewHolder();
             viewHolder.txtName = (TextView) convertView.findViewById(R.id.txtName);
             viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
 
-            result=convertView;
+            result = convertView;
             convertView.setTag(viewHolder);
 
         } else {
@@ -66,7 +69,7 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
             result=convertView;
         }
 
-        DataModel item = getItem(position);
+        MemberModel item = getItem(position);
 
 
         viewHolder.txtName.setText(item.name);
@@ -78,15 +81,30 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
 
 
 
-    static class DataModel {
+    static class MemberModel implements Serializable {
 
         public String name;
         boolean checked;
+        public String uid;
 
-        DataModel(String name, boolean checked) {
+        MemberModel(String name, boolean checked, String uid) {
             this.name = name;
             this.checked = checked;
+            this.uid = uid;
+        }
 
+        MemberModel() {}
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isChecked() {
+            return checked;
+        }
+
+        public String getUid() {
+            return uid;
         }
     }
 }

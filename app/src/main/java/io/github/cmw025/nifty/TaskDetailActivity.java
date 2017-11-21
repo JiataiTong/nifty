@@ -31,7 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 public class TaskDetailActivity extends AppCompatActivity {
 
@@ -48,8 +51,9 @@ public class TaskDetailActivity extends AppCompatActivity {
     private long taskListID;
     private DatabaseReference taskRef;
     private String projectFireBaseID;
+    private String uid;
 
-    private ArrayList<String> currentMembers;
+    private HashSet<MemberModel> currentMembers;
 
 
     @Override
@@ -81,7 +85,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskListID = intent.getLongExtra("taskListID", 0);
 
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
 
         taskRef.child("project").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -139,9 +143,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef.child("members").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                currentMembers = new ArrayList<>();
+                currentMembers = new HashSet<>();
                 for (DataSnapshot child : data.getChildren()) {
-                    currentMembers.add(child.getKey());
+                    MemberModel member = child.getValue(MemberModel.class);
+                    currentMembers.add(member);
                 }
             }
 
@@ -215,7 +220,8 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void addMembers(View view) {
         Intent intent = new Intent (this, AddMemberActivity.class);
         intent.putExtra("projectFireBaseID", projectFireBaseID);
-        intent.putStringArrayListExtra("currentMembers", currentMembers);
+        intent.putExtra("taskFireBaseKey", taskFireBaseKey);
+        intent.putExtra("currentMembers", currentMembers);
         startActivity(intent);
         overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }

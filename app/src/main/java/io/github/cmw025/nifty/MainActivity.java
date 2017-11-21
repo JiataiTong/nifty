@@ -20,6 +20,7 @@ import io.github.cmw025.nifty.R;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    static final int LOGIN_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             // myIntent.putExtra("key", value); //Optional parameters
-            startActivity(intent);
+            startActivityForResult(intent, LOGIN_REQUEST);
         }
 
         // Save user profile to FireBase

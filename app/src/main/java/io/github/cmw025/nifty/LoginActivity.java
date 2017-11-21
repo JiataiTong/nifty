@@ -49,6 +49,10 @@ public class LoginActivity extends FragmentActivity
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
         // updateUI(currentUser);
     }
 
@@ -139,7 +143,10 @@ public class LoginActivity extends FragmentActivity
                                 TextView tv = (TextView) findViewById(R.id.results);
                                 tv.setText("You signed in as: " + name + " "
                                         + email);
-                                finish();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                String uid = user.getUid();
+                                intent.putExtra("uid", uid); //Optional parameters
+                                startActivity(intent);
                             }
                         } else {
                             // If sign in fails, display a message to the user.
