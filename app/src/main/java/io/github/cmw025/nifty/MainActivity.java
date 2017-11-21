@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         profile.child("email").setValue(currentUser.getEmail());
         profile.child("phone").setValue(currentUser.getPhoneNumber());
 
-        // Default fragment to list
-        Fragment fragment = new ListFragment();
+        // Default fragment to project list
+        Fragment fragment = new ProjectListFragment();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.contentFragment, fragment);

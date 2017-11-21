@@ -1,5 +1,7 @@
 package io.github.cmw025.nifty;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -49,8 +51,8 @@ public class AddMemberActivity extends AppCompatActivity {
         // Set up FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        projectRef = fb.child("projects").child(uid).child(projectFireBaseID);
-        taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
+        projectRef = fb.child("projects").child(projectFireBaseID);
+        taskRef = fb.child("tasks").child(taskFireBaseKey);
 
         // Get project member list
         projectRef.child("members").addValueEventListener(new ValueEventListener() {
@@ -58,7 +60,7 @@ public class AddMemberActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot data) {
                 for (DataSnapshot child : data.getChildren()) {
                     MemberModel member = child.getValue(MemberModel.class);
-                    boolean alreadyOnTask = currentMembers.contains(member);
+                    member.checked = currentMembers.contains(member);
                     memberModels.add(member);
                 }
                 adapter.updateItems(memberModels);
@@ -80,28 +82,40 @@ public class AddMemberActivity extends AppCompatActivity {
                 if (clickedMember.checked ) {
                     currentMembers.add(clickedMember);
                     String name = clickedMember.getName();
-                    // Log.v("member: ", name + " checked");
+                    Log.v("member: ", name + " checked");
+                    for (MemberModel member : currentMembers) {
+                        String memberName = member.getName();
+                        Log.v("member", "currentMember contains: " + memberName);
+                    }
                 }
                 else {
                     currentMembers.remove(clickedMember);
                     String name = clickedMember.getName();
-                    // Log.v("member: ", name + " unchecked");
+                    Log.v("member: ", name + " unchecked");
+                    for (MemberModel member : currentMembers) {
+                        String memberName = member.getName();
+                        Log.v("member", "currentMember contains: " + memberName);
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
         });
     }
 
-    public void updateFireBase() {
-        for (MemberModel member : currentMembers) {
-            String name = member.getName();
-            // Log.v("member name: ", name);
-            taskRef.child("members").child(member.getUid()).setValue(member);
-        }
-    }
+
 
     public void goBack(View view) {
-        updateFireBase();
+        if (currentMembers != null) {
+            if (!currentMembers.isEmpty()) {
+                taskRef.child("members").setValue(new ArrayList(currentMembers));
+            }
+            else {
+                taskRef.child("members").removeValue();
+            }
+        }
+        else {
+            taskRef.child("members").removeValue();
+        }
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }

@@ -1,6 +1,7 @@
 package io.github.cmw025.nifty;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.CardViewNative;
+
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 public class ProjectListFragment extends Fragment {
 
@@ -102,14 +105,14 @@ public class ProjectListFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
 
-        DatabaseReference projects = fb.child("projects").child(uid);
+        DatabaseReference projects = fb.child("usrs").child(uid).child("projects");
         projects.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 ArrayList<Card> cards = new ArrayList<>();
                 for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
-                    Log.v("fb", child.getKey() + ": " + project.getName());
+//                    Log.v("fb", child.getKey() + ": " + project.getName());
 
                     Card card = new Card(getActivity(), R.layout.example);
                     card.setId("a");
@@ -117,16 +120,19 @@ public class ProjectListFragment extends Fragment {
                         @Override
                         public void onClick(Card card, View view) {
                             String key = child.getKey();
-
                             Intent intent = new Intent(getActivity(), ProjectActivity.class);
                             intent.putExtra("projectFireBaseID", key);
+                            intent.putExtra("projectName", project.getName());
                             getActivity().startActivity(intent);
                         }
                     });
                     cards.add(card);
                 }
-                CardListView listview = (CardListView) getActivity().findViewById(R.id.myList);
-                listview.setAdapter(new CardArrayAdapter(getActivity(), cards));
+                Activity activity = getActivity();
+                assert activity != null;
+
+                CardListView listView = (CardListView) activity.findViewById(R.id.myList);
+                listView.setAdapter(new CardArrayAdapter(getActivity(), cards));
             }
 
             @Override
@@ -142,13 +148,28 @@ public class ProjectListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Date date = new Date();
-                ProjectModel project = new ProjectModel("COOL", "SUCH CONTENT",
+                ProjectModel project = new ProjectModel("COOL PROJECT", "EMPTY CONTENT",
                         date, date, 0);
 
-                DatabaseReference ref = fb.child("projects").child(uid).push();
+                DatabaseReference ref = fb.child("projects").push();
                 ref.setValue(project);
+
+
+                // For now we pretend we are in every new project we create
+                MemberModel member = new MemberModel("Jimmy", true, uid);
+                MemberModel member2 = new MemberModel("sonia", false, uid + "1");
+                MemberModel member3 = new MemberModel("Troy", false, uid + "2");
+                MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
+                ref.child("members").push().setValue(member);
+                ref.child("members").push().setValue(member2);
+                ref.child("members").push().setValue(member3);
+                ref.child("members").push().setValue(member4);
                 String key = ref.getKey();
-                fb.child("usrs").child(uid).child("projects").child(key).setValue(true);
+                fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
+                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
+                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
+                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
             }
         });
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 /**
  * Created by troytong on 2017/11/9.
@@ -16,8 +17,8 @@ public class ProjectModel {
     private Date startDate;
     private Date dueDate;
     private Date finishDate;
-    private List<TaskModel> unfinishedTasks;
-    private List<TaskModel> finishedTasks;
+    private List<TaskModel> tasks;
+    private List<MemberModel> members;
     private int index;
     private boolean overDue = false;
     private boolean finished;
@@ -34,25 +35,17 @@ public class ProjectModel {
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.finishDate = null;
-        this.unfinishedTasks = new ArrayList<TaskModel>();
+        this.tasks = new ArrayList<TaskModel>();
+        this.members = new ArrayList<MemberModel>();
         //this.milstone = new Milestone();
         this.finished = false;
-        this.finishedTasks = new ArrayList<TaskModel>();
     }
 
     //getters
 
-    public int getNumTasks() {
-        return this.unfinishedTasks.size()+this.finishedTasks.size();
-    }
-
-    public int getNumUNFTasks() {
-        return this.unfinishedTasks.size();
-    }
-
-    public int getNumFTasks() {
-        return this.finishedTasks.size();
-    }
+//    public int getNumTasks() {
+//        return this.tasks.size();
+//    }
 
     public String getName() {
         return this.name;
@@ -74,25 +67,13 @@ public class ProjectModel {
         return this.content;
     }
 
-    public List<TaskModel> getUnfinishedTasks() {
-        return this.unfinishedTasks;
-    }
-
-    public List<TaskModel> getFinishedTasks() {
-        return this.finishedTasks;
-    }
-
-    public TaskModel getUnfinishedTask(int index) {
-        assert (index < this.unfinishedTasks.size());
-        assert (index >= 0);
-        return this.unfinishedTasks.get(index);
-    }
-
-    public TaskModel getFinishedTask(int index) {
-        assert (index < this.finishedTasks.size());
-        assert (index >= 0);
-        return this.finishedTasks.get(index);
-    }
+//    public List<TaskModel> getTasks() {
+//        return this.tasks;
+//    }
+//
+//    public List<MemberModel> getMembers() {
+//        return this.members;
+//    }
 
     public boolean isFinished() {
         return this.finished;
@@ -140,21 +121,16 @@ public class ProjectModel {
     }
 
     //methods
-    public void addUnfinishedTask(TaskModel task){
-        this.unfinishedTasks.add(task);
-        Collections.sort(this.getUnfinishedTasks());
+    public void addTask(TaskModel task){
+        this.tasks.add(task);
     }
 
-    public void deleteUnfinishedTask(TaskModel task) {
-        this.unfinishedTasks.remove(task);
+    public void addMember(MemberModel member) {
+        this.members.add(member);
     }
 
-    public void addFinishedTask(TaskModel task) {
-        this.finishedTasks.add(task);
-    }
-
-    public void deleteFinishedTask(TaskModel task) {
-        this.finishedTasks.remove(task);
+    public void deleteTask(TaskModel task) {
+        this.tasks.remove(task);
     }
 
     public boolean isOverDue(){
@@ -164,22 +140,19 @@ public class ProjectModel {
         return this.overDue;
     }
 
-    public void finishTask(TaskModel task) {
-        this.unfinishedTasks.remove(task);
-        task.finish();
-        this.finishedTasks.add(task);
-
-    }
-
-    public boolean finishProject() {
-        if (this.isFinished() != true && this.unfinishedTasks.size() == 0) {
-            this.finished = true;
-            this.finishDate = new Date();
-            this.isOverDue();
-            return true;
-        }
-        return false;
-    }
+//    public void finishTask(TaskModel task) {
+//        task.finish();
+//    }
+//
+//    public boolean finishProject() {
+//        if (this.isFinished() != true && this.unfinishedTasks.size() == 0) {
+//            this.finished = true;
+//            this.finishDate = new Date();
+//            this.isOverDue();
+//            return true;
+//        }
+//        return false;
+//    }
 
 
 }

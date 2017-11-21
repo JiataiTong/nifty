@@ -106,5 +106,21 @@ public class RecyclerViewCheckboxAdapter extends ArrayAdapter {
         public String getUid() {
             return uid;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof MemberModel))
+                return false;
+            if (obj == this)
+                return true;
+
+            MemberModel that = (MemberModel) obj;
+            return (this.uid.equals(that.uid));
+        }
+
+        @Override
+        public int hashCode() {
+            return this.name.length();
+        }
     }
 }

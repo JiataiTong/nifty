@@ -36,10 +36,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
-
 
 public class ListFragment extends Fragment {
+
+    private String projectFireBaseID;
+
+    // Assumming calling from inside project
+    @Override
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
+        projectFireBaseID = getActivity().getIntent().getStringExtra("projectFireBaseID");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,18 +78,17 @@ public class ListFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         String uid = user.getUid();
 
-        DatabaseReference tasks = fb.child("tasks").child(uid);
-        tasks.addValueEventListener(new ValueEventListener() {
+        DatabaseReference tasksRef = fb.child("projects").child(projectFireBaseID).child("tasks");
+        tasksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                List<TaskModel> list = new ArrayList<>();
+                List<TaskModel> taskList = new ArrayList<>();
                 for (DataSnapshot child: data.getChildren()) {
                     TaskModel task = child.getValue(TaskModel.class);
-                    // Log.v("fb", child.getKey() + ": " + task.getName());
-                    list.add(task);
+                    taskList.add(task);
                 }
-                Collections.reverse(list);
-                adapter.updateItems(list);
+                Collections.reverse(taskList);
+                adapter.updateItems(taskList);
             }
 
             @Override
@@ -128,46 +134,27 @@ public class ListFragment extends Fragment {
                                 event.getAction() == KeyEvent.ACTION_DOWN &&
                                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                             String title = toDo.getText().toString();
-                            if (!TextUtils.isEmpty(title)) {
-                                //RecyclerViewAdapter.MyItem item = new RecyclerViewAdapter.MyItem(0, text);
-                                //adapter.addItem(item);
-//                            Task task = new Task();
-//                            task.setTitle(text);
-//                            task.setProject() // Which project is this?
 
-                                // Get reference to "fb/tasks/uid/new_entry"
-                                DatabaseReference ref = fb.child("tasks").child(uid).push();
+                            if (!TextUtils.isEmpty(title)) {
+                                // Get reference to "fb/tasks/new_task"
+                                DatabaseReference ref = fb.child("tasks").push();
                                 String taskKey = ref.getKey();
 
                                 // Create TaskModel
                                 long id = longHash(taskKey);
-                                TaskModel task = new TaskModel(title, "", id, taskKey);
+                                TaskModel task = new TaskModel(title, "", id, taskKey, projectFireBaseID);
 
                                 // Add task to FireBase
                                 ref.setValue(task);
-                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(true);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
 
-                                DatabaseReference projectRef = fb.child("projects").child(uid).push();
-                                String projectKey = projectRef.getKey();
-                                projectRef.child(taskKey).setValue(task);
-                                ref.child("project").setValue(projectKey);
+                                // Get project ref
+                                DatabaseReference projectRef = fb.child("projects").child(projectFireBaseID);
 
+                                // Retrieve current project, add task to project, and update FireBase
+                                projectRef.child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child(taskKey).setValue(true);
 
-                                fb.child("usrs").child(uid).child("name").addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot data) {
-                                        String name = (String) data.getValue();
-                                        MemberModel member = new MemberModel(name, true, uid);
-                                        projectRef.child("members").child(uid).setValue(member);
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                                // Reset toDo to empty string
                                 toDo.setText("");
                             }
                             return false; // consume.

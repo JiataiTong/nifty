@@ -1,5 +1,6 @@
 package io.github.cmw025.nifty;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -63,6 +64,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         taskName = (EditText) findViewById(R.id.fragment_note_title);
         taskContent = (EditText) findViewById(R.id.task_content);
+        currentMembers = new HashSet<>();
 
         dueButton = (Button) findViewById(R.id.dateChoose);
         dueButton.setOnClickListener(new View.OnClickListener() {
@@ -86,24 +88,14 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        taskRef = fb.child("tasks").child(uid).child(taskFireBaseKey);
-
-        taskRef.child("project").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot data) {
-                projectFireBaseID = (String) data.getValue();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        taskRef = fb.child("tasks").child(taskFireBaseKey);
 
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 TaskModel task = data.getValue(TaskModel.class);
+
+                projectFireBaseID = task.getProjectKey();
 
                 taskName.post(new Runnable(){
                     @Override
@@ -236,10 +228,10 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void goBack(View view) {
         // Update changed to FireBase
         Date date = new Date(mYear - 1900, mMonth, mDay);
-        TaskModel newTask = new TaskModel(taskName.getText().toString(), taskContent.getText().toString(), date, date, taskListID, taskFireBaseKey);
-        taskRef.setValue(newTask);
+        taskRef.child("name").setValue(taskName.getText().toString());
+        taskRef.child("content").setValue(taskContent.getText().toString());
+        taskRef.child("dueDate").setValue(date);
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
-
 }
