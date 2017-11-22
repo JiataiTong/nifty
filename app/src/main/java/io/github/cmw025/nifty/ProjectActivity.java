@@ -39,13 +39,17 @@ public class ProjectActivity extends FragmentActivity {
 
     private PagerAdapter mPagerAdapter;
 
+    private int realColor;
+    private String projectFireBaseID;
+    private String projectName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
-        String projectName = getIntent().getStringExtra("projectName");
+        projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
+        projectName = getIntent().getStringExtra("projectName");
 
         setContentView(R.layout.viewpager);
         TextView display = findViewById(R.id.project_name);
@@ -74,6 +78,7 @@ public class ProjectActivity extends FragmentActivity {
             public void onDataChange(DataSnapshot data) {
                 long l = (long) data.getValue();
                 int projectColor = (int) l;
+                realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
                 toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
                 // Set ToolBar color
             }
@@ -139,8 +144,11 @@ public class ProjectActivity extends FragmentActivity {
     }
 
     public void setSettings(View view) {
-        Intent intent = new Intent();
-        finish();
+        Intent intent = new Intent(ProjectActivity.this, ProjectSettingsActivity.class);
+        intent.putExtra("realColor", realColor);
+        intent.putExtra("projectFireBaseID", projectFireBaseID);
+        intent.putExtra("projectName", projectName);
+        startActivity(intent);
     }
 }
 

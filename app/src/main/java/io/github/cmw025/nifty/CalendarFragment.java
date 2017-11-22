@@ -208,7 +208,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //            }
         });
 
-        fb.child("usrs").child(uid).child("projects").addValueEventListener(new ValueEventListener() {
+        fb.child("usrs").child(uid).child("projects").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 projectList = new ArrayList<>();

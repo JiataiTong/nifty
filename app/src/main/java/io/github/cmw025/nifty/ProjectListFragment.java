@@ -239,13 +239,13 @@ public class ProjectListFragment extends Fragment {
                             });
                         }
                     });
-
-                    //Create thumbnail
-                    CardThumbnail thumb = new CardThumbnail(getActivity());
-                    //Set resource
-                    thumb.setDrawableResource(R.drawable.today_rect_background);
-                    //Add thumbnail to a card
-                    card.addCardThumbnail(thumb);
+//
+//                    //Create thumbnail
+//                    CardThumbnail thumb = new CardThumbnail(getActivity());
+//                    //Set resource
+//                    thumb.setDrawableResource(R.drawable.today_rect_background);
+//                    //Add thumbnail to a card
+//                    card.addCardThumbnail(thumb);
 
 //                    CardHeader header = new CardHeader(getContext());
 //                    header.setTitle(project.getName());
@@ -362,7 +362,7 @@ public class ProjectListFragment extends Fragment {
 
                 if (mListView != null) {
                     //Set the adapter
-                    mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+                    mCardArrayAdapter = new CardArrayAdapter(getContext(), cards);
                     mListView.setAdapter(mCardArrayAdapter);
                 }
             }
@@ -465,10 +465,6 @@ public class ProjectListFragment extends Fragment {
                             case R.id.purple:
 //                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_purple));
                                 color = R.color.light_purple;
-                                break;
-                            case R.id.pink:
-//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_pink));
-                                color = R.color.light_pink;
                                 break;
                         }
                     }
