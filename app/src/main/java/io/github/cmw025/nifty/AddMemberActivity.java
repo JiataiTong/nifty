@@ -34,6 +34,7 @@ public class AddMemberActivity extends AppCompatActivity {
     private HashSet<MemberModel> currentMembers;
     private DatabaseReference projectRef;
     private DatabaseReference taskRef;
+    private DatabaseReference taskRef2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class AddMemberActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         projectRef = fb.child("projects").child(projectFireBaseID);
         taskRef = fb.child("tasks").child(taskFireBaseKey);
+        taskRef2 = projectRef.child("tasks").child(taskFireBaseKey);
 
         // Get project member list
         projectRef.child("members").addValueEventListener(new ValueEventListener() {
@@ -81,21 +83,21 @@ public class AddMemberActivity extends AppCompatActivity {
                 clickedMember.checked = !clickedMember.checked;
                 if (clickedMember.checked ) {
                     currentMembers.add(clickedMember);
-                    String name = clickedMember.getName();
-                    Log.v("member: ", name + " checked");
-                    for (MemberModel member : currentMembers) {
-                        String memberName = member.getName();
-                        Log.v("member", "currentMember contains: " + memberName);
-                    }
+//                    String name = clickedMember.getName();
+//                    Log.v("member: ", name + " checked");
+//                    for (MemberModel member : currentMembers) {
+//                        String memberName = member.getName();
+//                        Log.v("member", "currentMember contains: " + memberName);
+//                    }
                 }
                 else {
                     currentMembers.remove(clickedMember);
-                    String name = clickedMember.getName();
-                    Log.v("member: ", name + " unchecked");
-                    for (MemberModel member : currentMembers) {
-                        String memberName = member.getName();
-                        Log.v("member", "currentMember contains: " + memberName);
-                    }
+//                    String name = clickedMember.getName();
+//                    Log.v("member: ", name + " unchecked");
+//                    for (MemberModel member : currentMembers) {
+//                        String memberName = member.getName();
+//                        Log.v("member", "currentMember contains: " + memberName);
+//                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -108,13 +110,16 @@ public class AddMemberActivity extends AppCompatActivity {
         if (currentMembers != null) {
             if (!currentMembers.isEmpty()) {
                 taskRef.child("members").setValue(new ArrayList(currentMembers));
+                taskRef2.child("members").setValue(new ArrayList(currentMembers));
             }
             else {
                 taskRef.child("members").removeValue();
+                taskRef2.child("members").setValue(new ArrayList(currentMembers));
             }
         }
         else {
             taskRef.child("members").removeValue();
+            taskRef2.child("members").setValue(new ArrayList(currentMembers));
         }
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);

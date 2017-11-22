@@ -1,0 +1,102 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:paddingLeft="23dp"
+        android:paddingStart="23dp"
+        android:paddingRight="40dp"
+        android:paddingEnd="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name "
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/Name"
+            android:hint="Add Project Name..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:paddingLeft="23dp"
+        android:paddingStart="23dp"
+        android:paddingRight="23dp"
+        android:paddingEnd="23dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color "
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <RadioGroup
+            android:id="@+id/color_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/red"
+                android:buttonTint="@color/light_red" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orange"
+                android:buttonTint="@color/light_orange"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yellow"
+                android:buttonTint="@color/light_yellow"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/green"
+                android:buttonTint="@color/light_green"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cyan"
+                android:buttonTint="@color/light_cyan"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/aqua"
+                android:buttonTint="@color/light_aqua"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/blue"
+                android:buttonTint="@color/light_blue"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/purple"
+                android:buttonTint="@color/light_purple"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pink"
+                android:buttonTint="@color/light_pink"/>
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

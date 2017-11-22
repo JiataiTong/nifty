@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // FireBase Sign In if necessary
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();

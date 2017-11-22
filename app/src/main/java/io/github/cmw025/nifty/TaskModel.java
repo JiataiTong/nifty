@@ -136,4 +136,9 @@ public class TaskModel implements Comparable<TaskModel> {
         this.finished = true;
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
 }

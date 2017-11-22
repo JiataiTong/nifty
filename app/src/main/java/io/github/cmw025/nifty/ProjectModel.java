@@ -22,11 +22,13 @@ public class ProjectModel {
     private int index;
     private boolean overDue = false;
     private boolean finished;
+    private String key;
+    private int color;
     //private Milestone milestone;
     
     public ProjectModel(){}
 
-    public ProjectModel(String name, String content, Date startDate, Date dueDate, int index){
+    public ProjectModel(String name, String content, Date startDate, Date dueDate, int index, String key, int color){
         assert (startDate.before(dueDate));
         assert (dueDate.after(new Date()));
         this.content = content;
@@ -39,6 +41,8 @@ public class ProjectModel {
         this.members = new ArrayList<MemberModel>();
         //this.milstone = new Milestone();
         this.finished = false;
+        this.key = key;
+        this.color = color;
     }
 
     //getters
@@ -46,6 +50,11 @@ public class ProjectModel {
 //    public int getNumTasks() {
 //        return this.tasks.size();
 //    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 
     public String getName() {
         return this.name;
@@ -67,13 +76,32 @@ public class ProjectModel {
         return this.content;
     }
 
+    public String getKey() {
+        return this.key;
+    }
+
+    public int getColor() {
+        return this.color;
+    }
+
 //    public List<TaskModel> getTasks() {
 //        return this.tasks;
 //    }
-//
-//    public List<MemberModel> getMembers() {
-//        return this.members;
-//    }
+    public void replaceTasks(List<TaskModel> newTasks) {
+        this.tasks = newTasks;
+    }
+
+    public List<TaskModel> giveMeTasks() {
+        return this.tasks;
+    }
+
+    public void replaceMembers(List<MemberModel> newMembers) {
+        this.members = newMembers;
+    }
+
+    public List<MemberModel> giveMeMembers() {
+        return this.members;
+    }
 
     public boolean isFinished() {
         return this.finished;
@@ -100,6 +128,13 @@ public class ProjectModel {
         this.startDate = startDate;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 
     @Override
     public boolean equals(Object o) {

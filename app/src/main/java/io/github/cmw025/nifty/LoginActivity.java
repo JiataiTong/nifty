@@ -31,6 +31,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.cmw025.nifty.R;
 
@@ -48,6 +49,7 @@ public class LoginActivity extends FragmentActivity
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

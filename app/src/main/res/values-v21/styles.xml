@@ -20,4 +20,14 @@
         <item name="android:outlineProvider">bounds</item>
     </style>
 
+    <!-- Other Button in Header for CardViewNative-->
+    <style name="card.native.header_button_base.other">
+        <item name="android:src">@drawable/ic_close_white_24dp</item>
+    </style>
+
+    <!-- Other Button in Header for CardView-->
+    <style name="card.header_button_base.other">
+        <item name="android:src">@drawable/ic_close_white_24dp</item>
+    </style>
+
 </resources>

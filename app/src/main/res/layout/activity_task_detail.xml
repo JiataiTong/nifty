@@ -53,6 +53,7 @@
 
 
     <Button
+        android:id="@+id/add_member"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingStart="20dp"

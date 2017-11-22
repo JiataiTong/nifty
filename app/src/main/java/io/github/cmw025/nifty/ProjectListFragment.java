@@ -2,14 +2,25 @@ package io.github.cmw025.nifty;
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +42,8 @@ import it.gmariotti.cardslib.library.cards.topcolored.TopColoredCard;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.internal.CardThumbnail;
+import it.gmariotti.cardslib.library.internal.base.BaseCard;
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.CardViewNative;
 
@@ -42,26 +56,30 @@ public class ProjectListFragment extends Fragment {
     private CardArrayAdapter mCardArrayAdapter;
     private DatabaseReference fb;
     private String uid;
+    private CardListView listView;
+    //private String color;
+    private int color;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = (View)inflater.inflate(R.layout.fragment_project_list, container, false);
+        listView = (CardListView) getActivity().findViewById(R.id.myList);
         return inflater.inflate(R.layout.fragment_project_list, container, false);
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initCard();
         initFirebase();
         initAddButton();
     }
 
-    /**
-     * This method builds a simple list of cards
-     */
-    private void initCard() {
-
+//    /**
+//     * This method builds a simple list of cards
+//     */
+//    private void initCard() {
 //        //Init an array of Cards
 //        ArrayList<Card> cards = new ArrayList<>();
 //        for (int i = 0; i < 7; i++) {
@@ -96,7 +114,7 @@ public class ProjectListFragment extends Fragment {
 //        if (mListView != null) {
 //            mListView.setAdapter(mCardArrayAdapter);
 //        }
-    }
+//    }
 
     public void initFirebase() {
         // Firebase
@@ -104,18 +122,35 @@ public class ProjectListFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
+        listView = (CardListView) getActivity().findViewById(R.id.myList);
 
         DatabaseReference projects = fb.child("usrs").child(uid).child("projects");
+
+
         projects.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 ArrayList<Card> cards = new ArrayList<>();
                 for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
-//                    Log.v("fb", child.getKey() + ": " + project.getName());
 
                     Card card = new Card(getActivity(), R.layout.example);
-                    card.setId("a");
+                    card.setId(project.getKey());
+                    card.setTitle(project.getName());
+                    card.setBackgroundResourceId(project.getColor());
+
+                    CardHeader header = new CardHeader(getContext());
+                    header.setOtherButtonVisible(true);
+                    header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
+                        @Override
+                        public void onButtonItemClick(Card card, View view) {
+                            String projectKey = child.getKey();
+                            fb.child("projects").child(projectKey).removeValue();
+                            fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+                        }
+                    });
+                    card.addCardHeader(header);
+
                     card.setOnClickListener(new Card.OnCardClickListener() {
                         @Override
                         public void onClick(Card card, View view) {
@@ -128,10 +163,7 @@ public class ProjectListFragment extends Fragment {
                     });
                     cards.add(card);
                 }
-                Activity activity = getActivity();
-                assert activity != null;
-
-                CardListView listView = (CardListView) activity.findViewById(R.id.myList);
+                Collections.reverse(cards);
                 listView.setAdapter(new CardArrayAdapter(getActivity(), cards));
             }
 
@@ -142,38 +174,145 @@ public class ProjectListFragment extends Fragment {
         });
     }
 
+//    public void initAddButton() {
+//        ImageView button = getActivity().findViewById(R.id.add_project);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Date date = new Date();
+//                ProjectModel project = new ProjectModel("COOL PROJECT", "EMPTY CONTENT",
+//                        date, date, 0);
+//
+//                DatabaseReference ref = fb.child("projects").push();
+//                ref.setValue(project);
+//
+//
+//                // For now we pretend we are in every new project we create
+//                MemberModel member = new MemberModel("Jimmy", true, uid);
+//                MemberModel member2 = new MemberModel("sonia", false, uid + "1");
+//                MemberModel member3 = new MemberModel("Troy", false, uid + "2");
+//                MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
+//                ref.child("members").push().setValue(member);
+//                ref.child("members").push().setValue(member2);
+//                ref.child("members").push().setValue(member3);
+//                ref.child("members").push().setValue(member4);
+//                String key = ref.getKey();
+//                fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+//            }
+//        });
+//
+//    }
+
     public void initAddButton() {
         ImageView button = getActivity().findViewById(R.id.add_project);
         button.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
-                Date date = new Date();
-                ProjectModel project = new ProjectModel("COOL PROJECT", "EMPTY CONTENT",
-                        date, date, 0);
+                LayoutInflater li=LayoutInflater.from(getActivity());
+                View promptsView=li.inflate(R.layout.addprojectlayout,null);
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setTitle("New Project");
+                builder.setView(promptsView);
 
-                DatabaseReference ref = fb.child("projects").push();
-                ref.setValue(project);
+
+                // Default to red
+                color = R.color.light_red;
+                final RadioGroup radioGroup = (RadioGroup)promptsView.findViewById(R.id.color_radio_group);
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+                {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId)
+                    {
+                        switch (checkedId) {
+                            case R.id.red:
+                                //color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_red));
+                                color = R.color.light_red;
+                                break;
+                            case R.id.orange:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_orange));
+                                color = R.color.light_orange;
+                                break;
+                            case R.id.yellow:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_yellow));
+                                color = R.color.light_yellow;
+                                break;
+                            case R.id.green:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_green));
+                                color = R.color.light_green;
+                                break;
+                            case R.id.cyan:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_cyan));
+                                color = R.color.light_cyan;
+                                break;
+                            case R.id.aqua:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_aqua));
+                                color = R.color.light_aqua;
+                                break;
+                            case R.id.blue:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_blue));
+                                color = R.color.light_blue;
+                                break;
+                            case R.id.purple:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_purple));
+                                color = R.color.light_purple;
+                                break;
+                            case R.id.pink:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_pink));
+                                color = R.color.light_pink;
+                                break;
+                        }
+                    }
+                });
 
 
-                // For now we pretend we are in every new project we create
-                MemberModel member = new MemberModel("Jimmy", true, uid);
-                MemberModel member2 = new MemberModel("sonia", false, uid + "1");
-                MemberModel member3 = new MemberModel("Troy", false, uid + "2");
-                MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
-                ref.child("members").push().setValue(member);
-                ref.child("members").push().setValue(member2);
-                ref.child("members").push().setValue(member3);
-                ref.child("members").push().setValue(member4);
-                String key = ref.getKey();
-                fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
-                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
-                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
-                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
-                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+                final EditText inputName= (EditText)promptsView.findViewById(R.id.Name);
+                inputName.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Date date = new Date();
+                        String name = inputName.getText().toString();
+
+                        DatabaseReference ref = fb.child("projects").push();
+                        String key = ref.getKey();
+                        ProjectModel project = new ProjectModel(name, "EMPTY CONTENT",
+                                date, date, 0, key, color);
+                        ref.setValue(project);
+
+                        // For now we pretend we are in every new project we create
+                        MemberModel member = new MemberModel("Jimmy", true, uid);
+                        MemberModel member2 = new MemberModel("sonia", false, uid + "1");
+                        MemberModel member3 = new MemberModel("Troy", false, uid + "2");
+                        MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
+                        ref.child("members").push().setValue(member);
+                        ref.child("members").push().setValue(member2);
+                        ref.child("members").push().setValue(member3);
+                        ref.child("members").push().setValue(member4);
+
+                        fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
 
     }
+
 
 //    //-------------------------------------------------------------------------------------------------------------
 //    // Animations. (these method aren't used in this demo, but they can be called to enable the animations)

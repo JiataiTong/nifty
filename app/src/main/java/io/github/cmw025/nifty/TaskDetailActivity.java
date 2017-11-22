@@ -50,6 +50,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     // Unique FireBase ID for this task
     private String taskFireBaseKey;
     private long taskListID;
+    private DatabaseReference fb;
     private DatabaseReference taskRef;
     private String projectFireBaseID;
     private String uid;
@@ -86,7 +87,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskFireBaseKey = intent.getStringExtra("taskFireBaseKey");
         taskListID = intent.getLongExtra("taskListID", 0);
 
-        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        fb = FirebaseDatabase.getInstance().getReference();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         taskRef = fb.child("tasks").child(taskFireBaseKey);
 
@@ -139,6 +140,18 @@ public class TaskDetailActivity extends AppCompatActivity {
                 for (DataSnapshot child : data.getChildren()) {
                     MemberModel member = child.getValue(MemberModel.class);
                     currentMembers.add(member);
+                }
+
+                // Update UI
+                if (!currentMembers.isEmpty()) {
+                    StringBuffer buffer = new StringBuffer();
+                    for (MemberModel member : currentMembers) {
+                        buffer.append(member.getName() + ", ");
+                    }
+                    String string = buffer.toString();
+                    string = string.substring(0, string.length() - 2);
+                    Button addMember = findViewById(R.id.add_member);
+                    addMember.setText(string);
                 }
             }
 
@@ -231,6 +244,12 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef.child("name").setValue(taskName.getText().toString());
         taskRef.child("content").setValue(taskContent.getText().toString());
         taskRef.child("dueDate").setValue(date);
+
+        DatabaseReference taskRef2 = fb.child("projects").child(projectFireBaseID).child("tasks").child(taskFireBaseKey);
+        taskRef2.child("name").setValue(taskName.getText().toString());
+        taskRef2.child("content").setValue(taskContent.getText().toString());
+        taskRef2.child("dueDate").setValue(date);
+
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
