@@ -37,15 +37,13 @@ import java.util.Date;
 import java.util.List;
 
 
-public class ListFragment extends Fragment {
+public class ListFragmentPersonal extends Fragment {
 
-    private String projectFireBaseID;
 
     // Assumming calling from inside project
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        projectFireBaseID = getActivity().getIntent().getStringExtra("projectFireBaseID");
     }
 
     @Override
@@ -78,7 +76,7 @@ public class ListFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         String uid = user.getUid();
 
-        DatabaseReference tasksRef = fb.child("projects").child(projectFireBaseID).child("tasks");
+        DatabaseReference tasksRef = fb.child("usrs").child(uid).child("tasks");
         tasksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
@@ -142,14 +140,14 @@ public class ListFragment extends Fragment {
 
                                 // Create TaskModel
                                 long id = longHash(taskKey);
-                                TaskModel task = new TaskModel(title, "", id, taskKey, projectFireBaseID);
+                                TaskModel task = new TaskModel(title, "", id, taskKey, uid);
 
                                 // Add task to FireBase
                                 ref.setValue(task);
-                                // fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
 
                                 // Get project ref
-                                DatabaseReference projectRef = fb.child("projects").child(projectFireBaseID);
+                                DatabaseReference projectRef = fb.child("projects").child(uid);
 
                                 // Retrieve current project, add task to project, and update FireBase
                                 projectRef.child("tasks").child(taskKey).setValue(task);
