@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -120,6 +121,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 ProjectModel project = (ProjectModel) item;
                 String projectKey = project.getKey();
 
+
                 fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot data) {
@@ -177,6 +179,11 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                         EventDecorator eventDecorator = new EventDecorator(realColor, dates);
                         calendarView.addDecorator(eventDecorator);
 
+                        // Project name
+                        String colorString = Integer.toString(realColor, 16);
+                        // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
+                        String text = "<font color=#ffffff>"+ project.getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                        spinner.setText(Html.fromHtml(text));
                     }
 
                     @Override
@@ -231,13 +238,17 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 spinnerArrayAdapter.addAll(projectList);
                 // UI default to first project
                 if (!projectList.isEmpty()) {
-                    // Project name
-                    spinner.setText(projectList.get(0).getName());
                     // Calendar decorator color
                     int projectColor = projectList.get(0).getColor();
                     int realColor = ContextCompat.getColor(getContext(), projectColor);
                     todayDecorator = new TodayDecorator(realColor);
                     calendarView.addDecorator(todayDecorator);
+
+                    // Project name
+                    String colorString = Integer.toString(realColor, 16);
+                    // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
+                    String text = "<font color=#ffffff>"+ projectList.get(0).getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                    spinner.setText(Html.fromHtml(text));
                 }
             }
 
