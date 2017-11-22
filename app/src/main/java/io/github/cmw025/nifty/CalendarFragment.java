@@ -112,7 +112,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.MONTH, -2);
                 ArrayList<CalendarDay> dates = new ArrayList<>();
-                for (TaskModel task: project.giveMeTasks()) {
+                ArrayList<TaskModel> taskList = new ArrayList<>();
+                for (TaskModel task: taskList) {
                     Log.v("tasks", "this is task:" + task);
                     CalendarDay day = CalendarDay.from(calendar);
                     dates.add(day);
@@ -161,7 +162,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                                 TaskModel mTask = task.getValue(TaskModel.class);
                                 newTaskList.add(mTask);
                             }
-                            project.replaceTasks(newTaskList);
+                            // project.replaceTasks(newTaskList);
                             projectList.add(project);
                         }
 
@@ -183,7 +184,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
             }
         });
-        new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
+        //new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
 //
 //        EditText editText = (EditText) activity.findViewById(R.id.add_task);
 //        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

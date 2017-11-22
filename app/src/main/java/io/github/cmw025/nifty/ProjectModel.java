@@ -17,8 +17,6 @@ public class ProjectModel {
     private Date startDate;
     private Date dueDate;
     private Date finishDate;
-    private List<TaskModel> tasks;
-    private List<MemberModel> members;
     private int index;
     private boolean overDue = false;
     private boolean finished;
@@ -37,8 +35,6 @@ public class ProjectModel {
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.finishDate = null;
-        this.tasks = new ArrayList<TaskModel>();
-        this.members = new ArrayList<MemberModel>();
         //this.milstone = new Milestone();
         this.finished = false;
         this.key = key;
@@ -50,6 +46,7 @@ public class ProjectModel {
 //    public int getNumTasks() {
 //        return this.tasks.size();
 //    }
+
 
     @Override
     public String toString() {
@@ -82,25 +79,6 @@ public class ProjectModel {
 
     public int getColor() {
         return this.color;
-    }
-
-//    public List<TaskModel> getTasks() {
-//        return this.tasks;
-//    }
-    public void replaceTasks(List<TaskModel> newTasks) {
-        this.tasks = newTasks;
-    }
-
-    public List<TaskModel> giveMeTasks() {
-        return this.tasks;
-    }
-
-    public void replaceMembers(List<MemberModel> newMembers) {
-        this.members = newMembers;
-    }
-
-    public List<MemberModel> giveMeMembers() {
-        return this.members;
     }
 
     public boolean isFinished() {
@@ -153,19 +131,6 @@ public class ProjectModel {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
-    }
-
-    //methods
-    public void addTask(TaskModel task){
-        this.tasks.add(task);
-    }
-
-    public void addMember(MemberModel member) {
-        this.members.add(member);
-    }
-
-    public void deleteTask(TaskModel task) {
-        this.tasks.remove(task);
     }
 
     public boolean isOverDue(){

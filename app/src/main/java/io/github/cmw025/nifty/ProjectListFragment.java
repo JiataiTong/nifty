@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -15,8 +17,11 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.dragdrop.OnItemMovedListener;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -142,10 +148,64 @@ public class ProjectListFragment extends Fragment {
                     card.setOnSwipeListener(new Card.OnSwipeListener() {
                         @Override
                         public void onSwipe(Card card) {
+
                             String projectKey = child.getKey();
-                            fb.child("projects").child(projectKey).removeValue();
+                            // Remove user from the project
+                            fb.child("projects").child(projectKey).child("members").child(uid).removeValue();
+                            // Remove project reference under user
                             fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
 
+                            Snackbar undo = Snackbar.make(getActivity().findViewById(R.id.myList), "Removed " + project.getName(), Snackbar.LENGTH_LONG);
+                            undo.setAction("UNDO", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    // Add user back to the project
+                                    String userName = user.getDisplayName();
+                                    MemberModel user = new MemberModel(userName, true, uid);
+                                    fb.child("projects").child(projectKey).child("members").child(uid).setValue(user);
+
+                                    // Update project info under user
+                                    fb.child("usrs").child(uid).child("projects").child(projectKey).setValue(project);
+                                    fb.child("projects").child(projectKey).child("members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot data) {
+                                            for (DataSnapshot child : data.getChildren()) {
+                                                MemberModel member = child.getValue(MemberModel.class);
+                                                fb.child("usrs").child(uid).child("projects").child(projectKey).child("members").child(member.getUid()).setValue(member);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                }
+                            });
+                            undo.show();
+                            undo.addCallback(new Snackbar.Callback() {
+                                @Override
+                                public void onDismissed(Snackbar snackbar, int event) {
+                                    //see Snackbar.Callback docs for event details
+                                }
+                            });
+
+                            projects.child("members").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot data) {
+                                    ArrayList<MemberModel> members = new ArrayList<>();
+                                    for (DataSnapshot child : data.getChildren()) {
+                                        MemberModel member = child.getValue(MemberModel.class);
+                                        members.add(member);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     });
 
@@ -229,9 +289,14 @@ public class ProjectListFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
+
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_around_center);
+                button.startAnimation(animation);
+
                 LayoutInflater li=LayoutInflater.from(getActivity());
                 View promptsView=li.inflate(R.layout.addprojectlayout,null);
                 AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setIcon(R.drawable.ic_note_add_black_24dp);
                 builder.setTitle("New Project");
                 builder.setView(promptsView);
 
@@ -288,7 +353,7 @@ public class ProjectListFragment extends Fragment {
 
                 final EditText inputName= (EditText)promptsView.findViewById(R.id.Name);
                 inputName.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Date date = new Date();
@@ -296,33 +361,38 @@ public class ProjectListFragment extends Fragment {
 
                         DatabaseReference ref = fb.child("projects").push();
                         String key = ref.getKey();
-                        ProjectModel project = new ProjectModel(name, "EMPTY CONTENT",
+                        ProjectModel project = new ProjectModel(name, "",
                                 date, date, 0, key, color);
                         ref.setValue(project);
 
                         // For now we pretend we are in every new project we create
                         MemberModel member = new MemberModel("Jimmy", true, uid);
-                        MemberModel member2 = new MemberModel("sonia", false, uid + "1");
-                        MemberModel member3 = new MemberModel("Troy", false, uid + "2");
-                        MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
-                        ref.child("members").push().setValue(member);
-                        ref.child("members").push().setValue(member2);
-                        ref.child("members").push().setValue(member3);
-                        ref.child("members").push().setValue(member4);
+                        MemberModel member2 = new MemberModel("sonia", false, "SONIA'S UNIQUE ID");
+                        MemberModel member3 = new MemberModel("Troy", false, "TROY'S UNIQUE ID");
+                        MemberModel member4 = new MemberModel("Weiwei", false, "WEIWEI VERY SPECIAL");
 
+                        ref.child("members").child(member.getUid()).setValue(member);
+                        ref.child("members").child(member2.getUid()).setValue(member2);
+                        ref.child("members").child(member3.getUid()).setValue(member3);
+                        ref.child("members").child(member4.getUid()).setValue(member4);
+
+                        // Save user project history
                         fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+
+                        // Save project
+                        fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member.getUid()).setValue(member);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member2.getUid()).setValue(member2);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member3.getUid()).setValue(member3);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member4.getUid()).setValue(member4);
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
                 builder.show();
             }
         });
