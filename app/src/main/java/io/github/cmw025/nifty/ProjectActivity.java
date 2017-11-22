@@ -5,11 +5,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -32,6 +40,7 @@ public class ProjectActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         String projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
         String projectName = getIntent().getStringExtra("projectName");
 
@@ -51,6 +60,25 @@ public class ProjectActivity extends FragmentActivity {
 
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        // FireBase
+        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        fb.child("projects").child(projectFireBaseID).child("color").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                long l = (long) data.getValue();
+                int projectColor = (int) l;
+                toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
+                // Set ToolBar color
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

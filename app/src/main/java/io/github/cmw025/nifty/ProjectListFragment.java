@@ -29,6 +29,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -152,8 +153,25 @@ public class ProjectListFragment extends Fragment {
                             String projectKey = child.getKey();
                             // Remove user from the project
                             fb.child("projects").child(projectKey).child("members").child(uid).removeValue();
+
                             // Remove project reference under user
                             fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+
+                            // Remove associated tasks under user
+                            fb.child("projects").child(projectKey).child("tasks").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot data) {
+                                    for (DataSnapshot child : data.getChildren()) {
+                                        String taskKey = child.getKey();
+                                        fb.child("usrs").child(uid).child("tasks").child(taskKey).removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
 
                             Snackbar undo = Snackbar.make(getActivity().findViewById(R.id.myList), "Removed " + project.getName(), Snackbar.LENGTH_LONG);
                             undo.setAction("UNDO", new View.OnClickListener() {
@@ -166,6 +184,8 @@ public class ProjectListFragment extends Fragment {
 
                                     // Update project info under user
                                     fb.child("usrs").child(uid).child("projects").child(projectKey).setValue(project);
+
+                                    // Add back member list
                                     fb.child("projects").child(projectKey).child("members").addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot data) {
@@ -181,15 +201,26 @@ public class ProjectListFragment extends Fragment {
                                         }
                                     });
 
+                                    // Add back task list
+                                    fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot data) {
+                                            for (DataSnapshot child : data.getChildren()) {
+                                                TaskModel task = child.getValue(TaskModel.class);
+                                                fb.child("usrs").child(uid).child("projects").child(projectKey).child("tasks").child(task.getKey()).setValue(task);
+                                                fb.child("usrs").child(uid).child("tasks").child(task.getKey()).setValue(task);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+
                                 }
                             });
                             undo.show();
-                            undo.addCallback(new Snackbar.Callback() {
-                                @Override
-                                public void onDismissed(Snackbar snackbar, int event) {
-                                    //see Snackbar.Callback docs for event details
-                                }
-                            });
 
                             projects.child("members").addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -209,14 +240,106 @@ public class ProjectListFragment extends Fragment {
                         }
                     });
 
+                    //Create thumbnail
+                    CardThumbnail thumb = new CardThumbnail(getActivity());
+                    //Set resource
+                    thumb.setDrawableResource(R.drawable.today_rect_background);
+                    //Add thumbnail to a card
+                    card.addCardThumbnail(thumb);
+
 //                    CardHeader header = new CardHeader(getContext());
+//                    header.setTitle(project.getName());
 //                    header.setOtherButtonVisible(true);
 //                    header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
 //                        @Override
 //                        public void onButtonItemClick(Card card, View view) {
 //                            String projectKey = child.getKey();
-//                            fb.child("projects").child(projectKey).removeValue();
+//                            // Remove user from the project
+//                            fb.child("projects").child(projectKey).child("members").child(uid).removeValue();
+//
+//                            // Remove project reference under user
 //                            fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+//
+//                            // Remove associated tasks under user
+//                            fb.child("projects").child(projectKey).child("tasks").addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot data) {
+//                                    for (DataSnapshot child : data.getChildren()) {
+//                                        String taskKey = child.getKey();
+//                                        fb.child("usrs").child(uid).child("tasks").child(taskKey).removeValue();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
+//
+//                            Snackbar undo = Snackbar.make(getActivity().findViewById(R.id.myList), "Removed " + project.getName(), Snackbar.LENGTH_LONG);
+//                            undo.setAction("UNDO", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    // Add user back to the project
+//                                    String userName = user.getDisplayName();
+//                                    MemberModel user = new MemberModel(userName, true, uid);
+//                                    fb.child("projects").child(projectKey).child("members").child(uid).setValue(user);
+//
+//                                    // Update project info under user
+//                                    fb.child("usrs").child(uid).child("projects").child(projectKey).setValue(project);
+//
+//                                    // Add back member list
+//                                    fb.child("projects").child(projectKey).child("members").addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(DataSnapshot data) {
+//                                            for (DataSnapshot child : data.getChildren()) {
+//                                                MemberModel member = child.getValue(MemberModel.class);
+//                                                fb.child("usrs").child(uid).child("projects").child(projectKey).child("members").child(member.getUid()).setValue(member);
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(DatabaseError databaseError) {
+//
+//                                        }
+//                                    });
+//
+//                                    // Add back task list
+//                                    fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(DataSnapshot data) {
+//                                            for (DataSnapshot child : data.getChildren()) {
+//                                                TaskModel task = child.getValue(TaskModel.class);
+//                                                fb.child("usrs").child(uid).child("projects").child(projectKey).child("tasks").child(task.getKey()).setValue(task);
+//                                                fb.child("usrs").child(uid).child("tasks").child(task.getKey()).setValue(task);
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(DatabaseError databaseError) {
+//
+//                                        }
+//                                    });
+//
+//                                }
+//                            });
+//                            undo.show();
+//
+//                            projects.child("members").addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot data) {
+//                                    ArrayList<MemberModel> members = new ArrayList<>();
+//                                    for (DataSnapshot child : data.getChildren()) {
+//                                        MemberModel member = child.getValue(MemberModel.class);
+//                                        members.add(member);
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
 //                        }
 //                    });
 //                    card.addCardHeader(header);
@@ -227,6 +350,7 @@ public class ProjectListFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), ProjectActivity.class);
                             intent.putExtra("projectFireBaseID", key);
                             intent.putExtra("projectName", project.getName());
+                            intent.putExtra("projectColor", project.getColor());
                             getActivity().startActivity(intent);
                         }
                     });
