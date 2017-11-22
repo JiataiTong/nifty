@@ -97,12 +97,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         super.onActivityCreated(savedState);
         Activity activity = getActivity();
         calendarView = (MaterialCalendarView) activity.findViewById(R.id.calendarView);
-        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                Snackbar
-            }
-        });
 
         //calendarView.setTopbarVisible(false);
 
@@ -131,14 +125,41 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     public void onDataChange(DataSnapshot data) {
 
                         ArrayList<CalendarDay> dates = new ArrayList<>();
+                        ArrayList<TaskModel> tasks = new ArrayList<>();
                         for (DataSnapshot child : data.getChildren()) {
+                            // Add to task list
                             TaskModel task = child.getValue(TaskModel.class);
+                            tasks.add(task);
+
+                            // Add task due date to calendar
                             Date dueDate = task.getDueDate();
                             CalendarDay day = CalendarDay.from(dueDate);
                             dates.add(day);
                             // Snackbar.make(view, "Looped through task:  " + task, Snackbar.LENGTH_LONG).show();
                             // Log.v("task", task.getName());
                         }
+
+                        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+                            @Override
+                            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                                if (dates.contains(date)) {
+                                    // Snackbar.make(getView(), "Date  " + date, Snackbar.LENGTH_LONG).show();
+                                    ArrayList<TaskModel> tasksOnSelectedDay = new ArrayList<>();
+                                    for (TaskModel task: tasks) {
+                                        Date dueDate = task.getDueDate();
+                                        CalendarDay day = CalendarDay.from(dueDate);
+                                        if (day.equals(date)) {
+                                            tasksOnSelectedDay.add(task);
+                                            Snackbar.make(getView(), "Task  " + task, Snackbar.LENGTH_LONG).show();
+                                        }
+                                    }
+                                    // Get adapter to list fragment SOME MAGIC HERE
+                                    // RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
+                                    // Update list
+                                    // mAdapter.updateItems(tasksOnSelectedDay);
+                                }
+                            }
+                        });
 
                         // Log.v("task", "Done with looping tasks.");
 
