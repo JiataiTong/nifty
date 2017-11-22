@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.dragdrop.OnItemMovedListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,8 @@ import java.util.Date;
 import java.util.List;
 
 import it.gmariotti.cardslib.library.cards.topcolored.TopColoredCard;
+import it.gmariotti.cardslib.library.extra.dragdroplist.internal.CardDragDropArrayAdapter;
+import it.gmariotti.cardslib.library.extra.dragdroplist.view.CardListDragDropView;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
@@ -56,14 +59,11 @@ public class ProjectListFragment extends Fragment {
     private CardArrayAdapter mCardArrayAdapter;
     private DatabaseReference fb;
     private String uid;
-    private CardListView listView;
-    //private String color;
     private int color;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = (View)inflater.inflate(R.layout.fragment_project_list, container, false);
-        listView = (CardListView) getActivity().findViewById(R.id.myList);
         return inflater.inflate(R.layout.fragment_project_list, container, false);
     }
 
@@ -71,6 +71,7 @@ public class ProjectListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mListView = (CardListView) getActivity().findViewById(R.id.myList);
 
         initFirebase();
         initAddButton();
@@ -122,7 +123,6 @@ public class ProjectListFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
-        listView = (CardListView) getActivity().findViewById(R.id.myList);
 
         DatabaseReference projects = fb.child("usrs").child(uid).child("projects");
 
@@ -138,19 +138,28 @@ public class ProjectListFragment extends Fragment {
                     card.setId(project.getKey());
                     card.setTitle(project.getName());
                     card.setBackgroundResourceId(project.getColor());
-
-                    CardHeader header = new CardHeader(getContext());
-                    header.setOtherButtonVisible(true);
-                    header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
+                    card.setSwipeable(true);
+                    card.setOnSwipeListener(new Card.OnSwipeListener() {
                         @Override
-                        public void onButtonItemClick(Card card, View view) {
+                        public void onSwipe(Card card) {
                             String projectKey = child.getKey();
                             fb.child("projects").child(projectKey).removeValue();
                             fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+
                         }
                     });
-                    card.addCardHeader(header);
 
+//                    CardHeader header = new CardHeader(getContext());
+//                    header.setOtherButtonVisible(true);
+//                    header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
+//                        @Override
+//                        public void onButtonItemClick(Card card, View view) {
+//                            String projectKey = child.getKey();
+//                            fb.child("projects").child(projectKey).removeValue();
+//                            fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+//                        }
+//                    });
+//                    card.addCardHeader(header);
                     card.setOnClickListener(new Card.OnCardClickListener() {
                         @Override
                         public void onClick(Card card, View view) {
@@ -164,7 +173,14 @@ public class ProjectListFragment extends Fragment {
                     cards.add(card);
                 }
                 Collections.reverse(cards);
-                listView.setAdapter(new CardArrayAdapter(getActivity(), cards));
+
+
+
+                if (mListView != null) {
+                    //Set the adapter
+                    mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+                    mListView.setAdapter(mCardArrayAdapter);
+                }
             }
 
             @Override
