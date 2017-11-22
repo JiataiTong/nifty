@@ -1,16 +1,26 @@
 package io.github.cmw025.nifty;
 
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,18 +32,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.dragdrop.OnItemMovedListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import it.gmariotti.cardslib.library.cards.topcolored.TopColoredCard;
+import it.gmariotti.cardslib.library.extra.dragdroplist.internal.CardDragDropArrayAdapter;
+import it.gmariotti.cardslib.library.extra.dragdroplist.view.CardListDragDropView;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.internal.CardThumbnail;
+import it.gmariotti.cardslib.library.internal.base.BaseCard;
 import it.gmariotti.cardslib.library.view.CardListView;
 import it.gmariotti.cardslib.library.view.CardViewNative;
-import it.gmariotti.cardslib.library.view.listener.dismiss.Dismissable;
+
+import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
 public class ProjectListFragment extends Fragment {
 
@@ -42,105 +59,63 @@ public class ProjectListFragment extends Fragment {
     private CardArrayAdapter mCardArrayAdapter;
     private DatabaseReference fb;
     private String uid;
-    private Button deletepro;
-    private String projectid;
-
+    private int color;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = (View)inflater.inflate(R.layout.fragment_project_list, container, false);
         return inflater.inflate(R.layout.fragment_project_list, container, false);
-
-
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mListView = (CardListView) getActivity().findViewById(R.id.myList);
 
-        //initCard();
         initFirebase();
         initAddButton();
-        initDeletButton();
-
     }
 
-    private void initDeletButton() {
-        deletepro = getActivity().findViewById(R.id.deletepr);
-        deletepro.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                deleteProject(projectid);
-            }
-        });
-    }
-
-    private void deleteProject(String projectid) {
-        DatabaseReference proj = FirebaseDatabase.getInstance().getReference("Project").child("index");
-        DatabaseReference task = FirebaseDatabase.getInstance().getReference("task").child("index")
-
-    }
-
-    /**
-     * This method builds a simple list of cards
-     */
-    //private void initCard() {
-
-        //Init an array of Cards
-    //    ArrayList<Card> cards = new ArrayList<Card>();
-
-        //new Card(getContext());
-
-
-       /* for (int i = 0; i < 7; i++) {
-
-
-            Card card = new Card(this.getActivity(), R.layout.example);
-            card.setType(2);
-            card.setSwipeable(true);
-            //CardHeader header = new CardHeader(getContext());
-            //header.setTitle("Damn");
-            //card.addCardHeader(header);
-            //card.setTitle("" + i);
-            // card.setSecondaryTitle("Simple text..." + i);
-            // card.setCount(i);
-
-            //Card must have a stable Id.
-            card.setId("a" + i);
-            card.setOnClickListener(new Card.OnCardClickListener() {
-                @Override
-                public void onClick(Card card, View view) {
-                    Intent intent = new Intent(getActivity(), ProjectActivity.class);
-                    getActivity().startActivity(intent);
-
-                }
-            });
-        }*/
-       /*
-//Set the adapter
-        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-
-        mListView = (CardListView) getActivity().findViewById(R.id.myList);
-        if (mListView != null) {
-            mListView.setAdapter(mCardArrayAdapter);
-        }
-        //Set the adapter
-        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-        mCardArrayAdapter.setEnableUndo(true);
-        mCardArrayAdapter.setInnerViewTypeCount(3);
-
-        mListView = (CardListView) getActivity().findViewById(R.id.myList);
-        if (mListView != null) {
-            mListView.setAdapter(mCardArrayAdapter);
-        }
-        mCardArrayAdapter.setDismissable(new RightDismissableManager());
-        mCardArrayAdapter.setEnableUndo(true);
-
-        if (mListView != null) {
-            mListView.setAdapter(mCardArrayAdapter);
-        }
-
-    }*/
+//    /**
+//     * This method builds a simple list of cards
+//     */
+//    private void initCard() {
+//        //Init an array of Cards
+//        ArrayList<Card> cards = new ArrayList<>();
+//        for (int i = 0; i < 7; i++) {
+//
+//
+//            Card card = new Card(this.getActivity(), R.layout.example);
+//            //CardHeader header = new CardHeader(getContext());
+//            //header.setTitle("Damn");
+//            //card.addCardHeader(header);
+//            //card.setTitle("" + i);
+//            // card.setSecondaryTitle("Simple text..." + i);
+//            // card.setCount(i);
+//
+//            //Card must have a stable Id.
+//            card.setId("a"+i);
+//            card.setOnClickListener(new Card.OnCardClickListener() {
+//                @Override
+//                public void onClick(Card card, View view) {
+//                    Intent intent = new Intent(getActivity(), ProjectActivity.class);
+//                    getActivity().startActivity(intent);
+//                }
+//            });
+//
+//            cards.add(card);
+//        }
+//
+//
+//        //Set the adapter
+//        mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
+//
+//        mListView = (CardListView) getActivity().findViewById(R.id.myList);
+//        if (mListView != null) {
+//            mListView.setAdapter(mCardArrayAdapter);
+//        }
+//    }
 
     public void initFirebase() {
         // Firebase
@@ -149,57 +124,64 @@ public class ProjectListFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
 
-        DatabaseReference projects = fb.child("projects").child(uid);
+        DatabaseReference projects = fb.child("usrs").child(uid).child("projects");
+
+
         projects.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 ArrayList<Card> cards = new ArrayList<>();
                 for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
-                    Log.v("fb", child.getKey() + ": " + project.getName());
 
                     Card card = new Card(getActivity(), R.layout.example);
-                    card.setId(child.getKey());
+                    card.setId(project.getKey());
+                    card.setTitle(project.getName());
+                    card.setBackgroundResourceId(project.getColor());
+                    card.setSwipeable(true);
+                    card.setOnSwipeListener(new Card.OnSwipeListener() {
+                        @Override
+                        public void onSwipe(Card card) {
+                            String projectKey = child.getKey();
+                            fb.child("projects").child(projectKey).removeValue();
+                            fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+
+                        }
+                    });
+
+//                    CardHeader header = new CardHeader(getContext());
+//                    header.setOtherButtonVisible(true);
+//                    header.setOtherButtonClickListener(new CardHeader.OnClickCardHeaderOtherButtonListener() {
+//                        @Override
+//                        public void onButtonItemClick(Card card, View view) {
+//                            String projectKey = child.getKey();
+//                            fb.child("projects").child(projectKey).removeValue();
+//                            fb.child("usrs").child(uid).child("projects").child(projectKey).removeValue();
+//                        }
+//                    });
+//                    card.addCardHeader(header);
                     card.setOnClickListener(new Card.OnCardClickListener() {
                         @Override
                         public void onClick(Card card, View view) {
                             String key = child.getKey();
-
                             Intent intent = new Intent(getActivity(), ProjectActivity.class);
                             intent.putExtra("projectFireBaseID", key);
+                            intent.putExtra("projectName", project.getName());
                             getActivity().startActivity(intent);
                         }
                     });
                     cards.add(card);
                 }
+                Collections.reverse(cards);
 
-               /* mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
 
-                mListView = (CardListView) getActivity().findViewById(R.id.myList);
-                if (mListView != null) {
-                    mListView.setAdapter(mCardArrayAdapter);
-                }
-                //Set the adapter
-                mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
-                mCardArrayAdapter.setEnableUndo(true);
-                mCardArrayAdapter.setInnerViewTypeCount(3);
-
-                mListView = (CardListView) getActivity().findViewById(R.id.myList);
-                if (mListView != null) {
-                    mListView.setAdapter(mCardArrayAdapter);
-                }
-                mCardArrayAdapter.setDismissable(new RightDismissableManager());
-                mCardArrayAdapter.setEnableUndo(true);
 
                 if (mListView != null) {
+                    //Set the adapter
+                    mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
                     mListView.setAdapter(mCardArrayAdapter);
                 }
-                */
-
-                CardListView listview = (CardListView) getActivity().findViewById(R.id.myList);
-                listview.setAdapter(new CardArrayAdapter(getActivity(), cards));
             }
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -208,40 +190,145 @@ public class ProjectListFragment extends Fragment {
         });
     }
 
+//    public void initAddButton() {
+//        ImageView button = getActivity().findViewById(R.id.add_project);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Date date = new Date();
+//                ProjectModel project = new ProjectModel("COOL PROJECT", "EMPTY CONTENT",
+//                        date, date, 0);
+//
+//                DatabaseReference ref = fb.child("projects").push();
+//                ref.setValue(project);
+//
+//
+//                // For now we pretend we are in every new project we create
+//                MemberModel member = new MemberModel("Jimmy", true, uid);
+//                MemberModel member2 = new MemberModel("sonia", false, uid + "1");
+//                MemberModel member3 = new MemberModel("Troy", false, uid + "2");
+//                MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
+//                ref.child("members").push().setValue(member);
+//                ref.child("members").push().setValue(member2);
+//                ref.child("members").push().setValue(member3);
+//                ref.child("members").push().setValue(member4);
+//                String key = ref.getKey();
+//                fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
+//                fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+//            }
+//        });
+//
+//    }
+
     public void initAddButton() {
         ImageView button = getActivity().findViewById(R.id.add_project);
         button.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
-                Date date = new Date();
-                ProjectModel project = new ProjectModel("COOL", "SUCH CONTENT",
-                        date, date, 0);
+                LayoutInflater li=LayoutInflater.from(getActivity());
+                View promptsView=li.inflate(R.layout.addprojectlayout,null);
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setTitle("New Project");
+                builder.setView(promptsView);
 
-                DatabaseReference ref = fb.child("projects").child(uid).push();
-                ref.setValue(project);
-                String key = ref.getKey();
-                fb.child("usrs").child(uid).child("projects").child(key).setValue(true);
+
+                // Default to red
+                color = R.color.light_red;
+                final RadioGroup radioGroup = (RadioGroup)promptsView.findViewById(R.id.color_radio_group);
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+                {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId)
+                    {
+                        switch (checkedId) {
+                            case R.id.red:
+                                //color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_red));
+                                color = R.color.light_red;
+                                break;
+                            case R.id.orange:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_orange));
+                                color = R.color.light_orange;
+                                break;
+                            case R.id.yellow:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_yellow));
+                                color = R.color.light_yellow;
+                                break;
+                            case R.id.green:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_green));
+                                color = R.color.light_green;
+                                break;
+                            case R.id.cyan:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_cyan));
+                                color = R.color.light_cyan;
+                                break;
+                            case R.id.aqua:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_aqua));
+                                color = R.color.light_aqua;
+                                break;
+                            case R.id.blue:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_blue));
+                                color = R.color.light_blue;
+                                break;
+                            case R.id.purple:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_purple));
+                                color = R.color.light_purple;
+                                break;
+                            case R.id.pink:
+//                                color = "#" + Integer.toHexString(ContextCompat.getColor(getActivity(), R.color.light_pink));
+                                color = R.color.light_pink;
+                                break;
+                        }
+                    }
+                });
+
+
+                final EditText inputName= (EditText)promptsView.findViewById(R.id.Name);
+                inputName.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Date date = new Date();
+                        String name = inputName.getText().toString();
+
+                        DatabaseReference ref = fb.child("projects").push();
+                        String key = ref.getKey();
+                        ProjectModel project = new ProjectModel(name, "EMPTY CONTENT",
+                                date, date, 0, key, color);
+                        ref.setValue(project);
+
+                        // For now we pretend we are in every new project we create
+                        MemberModel member = new MemberModel("Jimmy", true, uid);
+                        MemberModel member2 = new MemberModel("sonia", false, uid + "1");
+                        MemberModel member3 = new MemberModel("Troy", false, uid + "2");
+                        MemberModel member4 = new MemberModel("Weiwei", false, uid + "3");
+                        ref.child("members").push().setValue(member);
+                        ref.child("members").push().setValue(member2);
+                        ref.child("members").push().setValue(member3);
+                        ref.child("members").push().setValue(member4);
+
+                        fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member2);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member3);
+                        fb.child("usrs").child(uid).child("projects").child(key).child("members").push().setValue(member4);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
 
     }
 
-    private class RightDismissableManager implements Dismissable {
-        @Override
-        public boolean isDismissable(int position, Card card) {
-            return false;
-        }
-
-        @Override
-        public SwipeDirection getSwipeDirectionAllowed() {
-            return SwipeDirection.LEFT;
-        }
-
-        @Override
-        public void setAdapter(Adapter adapter) {
-
-        }
-    }
 
 //    //-------------------------------------------------------------------------------------------------------------
 //    // Animations. (these method aren't used in this demo, but they can be called to enable the animations)

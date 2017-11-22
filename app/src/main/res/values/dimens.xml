@@ -26,5 +26,10 @@
     <dimen name="listview_item_minumum_height">48dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="card_header_native_default_paddingLeft">20dp</dimen>
+    <dimen name="card_header_native_default_paddingRight">20dp</dimen>
+    <dimen name="card_header_native_default_paddingTop">20dp</dimen>
+    <dimen name="card_header_native_default_paddingBottom">20dp</dimen>
+
 
 </resources>

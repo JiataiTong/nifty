@@ -7,9 +7,8 @@
     <it.gmariotti.cardslib.library.view.CardView
         android:id="@+id/list_cardId"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         card:card_layout_resourceID="@layout/custom_card_layout"
-        android:background="@drawable/gradient"
         />
 
 </LinearLayout>

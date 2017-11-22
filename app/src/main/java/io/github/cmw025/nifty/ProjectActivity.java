@@ -7,7 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -30,7 +32,18 @@ public class ProjectActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
+        String projectName = getIntent().getStringExtra("projectName");
+
         setContentView(R.layout.viewpager);
+        TextView display = findViewById(R.id.project_name);
+        display.post(new Runnable(){
+            @Override
+            public void run() {
+                display.setText(projectName);
+            }
+        });
+
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -58,6 +71,7 @@ public class ProjectActivity extends FragmentActivity {
      * sequence.
      */
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }

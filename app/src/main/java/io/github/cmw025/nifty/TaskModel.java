@@ -16,6 +16,7 @@ public class TaskModel implements Comparable<TaskModel> {
     private long id;
     // FireBase ID
     private String key;
+    private String projectKey;
 
     private String content;
     private Date startDate;
@@ -25,7 +26,7 @@ public class TaskModel implements Comparable<TaskModel> {
     private String name;
     private Date finishDate;
 
-    public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key){
+    public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key, String projectKey){
         this.name = name;
         this.content = content;
         this.startDate = startDate;
@@ -34,17 +35,19 @@ public class TaskModel implements Comparable<TaskModel> {
         //this.index = index;
         this.id = id;
         this.key = key;
+        this.projectKey = projectKey;
     }
 
     // Empty constructor for Firebase
     public TaskModel() {}
 
-    public TaskModel(String name, String content, long id, String key){
+    public TaskModel(String name, String content, long id, String key, String projectKey){
         this.name = name;
         this.content = content;
         this.finished = false;
         this.id = id;
         this.key = key;
+        this.projectKey = projectKey;
     }
 
     //getters
@@ -83,6 +86,10 @@ public class TaskModel implements Comparable<TaskModel> {
         return this.key;
     }
 
+    public String getProjectKey() {
+        return this.projectKey;
+    }
+
 
     //setters
     public void setContent(String content) {
@@ -96,11 +103,6 @@ public class TaskModel implements Comparable<TaskModel> {
     public void setDueDate(Date date) {
         this.dueDate = date;
     }
-
-//    public void setIndex(int index) {
-//        this.index = index;
-//    }
-
 
     public void setName(String name) {
         this.name = name;
@@ -132,6 +134,11 @@ public class TaskModel implements Comparable<TaskModel> {
     public void finish(){
         this.finishDate = new Date();
         this.finished = true;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }

@@ -50,8 +50,6 @@ dependencies {
     compile 'me.nlmartian.silkcal:library:0.1.1'
     implementation 'com.google.firebase:firebase-auth:11.0.4'
     implementation 'com.google.firebase:firebase-database:11.0.4'
-    compile 'com.google.firebase:firebase-auth:11.0.4'
-
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
