@@ -67,6 +67,7 @@ public class ProjectListFragment extends Fragment {
     private DatabaseReference fb;
     private String uid;
     private int color;
+    private String userDisplayName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,6 +131,7 @@ public class ProjectListFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
+        userDisplayName = user.getDisplayName();
 
         DatabaseReference projects = fb.child("usrs").child(uid).child("projects");
 
@@ -180,6 +182,7 @@ public class ProjectListFragment extends Fragment {
                                     // Add user back to the project
                                     String userName = user.getDisplayName();
                                     MemberModel user = new MemberModel(userName, true, uid);
+                                    // Add user back to project
                                     fb.child("projects").child(projectKey).child("members").child(uid).setValue(user);
 
                                     // Update project info under user
@@ -360,9 +363,9 @@ public class ProjectListFragment extends Fragment {
 
 
 
-                if (mListView != null) {
+                if (mListView != null && getActivity() != null) {
                     //Set the adapter
-                    mCardArrayAdapter = new CardArrayAdapter(getContext(), cards);
+                    mCardArrayAdapter = new CardArrayAdapter(getActivity(), cards);
                     mListView.setAdapter(mCardArrayAdapter);
                 }
             }
@@ -486,7 +489,7 @@ public class ProjectListFragment extends Fragment {
                         ref.setValue(project);
 
                         // For now we pretend we are in every new project we create
-                        MemberModel member = new MemberModel("Jimmy", true, uid);
+                        MemberModel member = new MemberModel(userDisplayName, true, uid);
                         MemberModel member2 = new MemberModel("sonia", false, "SONIA'S UNIQUE ID");
                         MemberModel member3 = new MemberModel("Troy", false, "TROY'S UNIQUE ID");
                         MemberModel member4 = new MemberModel("Weiwei", false, "WEIWEI VERY SPECIAL");

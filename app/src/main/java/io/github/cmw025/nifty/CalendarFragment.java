@@ -208,7 +208,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //            }
         });
 
-        fb.child("usrs").child(uid).child("projects").addListenerForSingleValueEvent(new ValueEventListener() {
+        fb.child("usrs").child(uid).child("projects").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 projectList = new ArrayList<>();
@@ -237,7 +237,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 spinnerArrayAdapter.clear();
                 spinnerArrayAdapter.addAll(projectList);
                 // UI default to first project
-                if (!projectList.isEmpty()) {
+                if (!projectList.isEmpty() && getActivity()!= null) {
                     // Calendar decorator color
                     int projectColor = projectList.get(0).getColor();
                     int realColor = ContextCompat.getColor(getContext(), projectColor);

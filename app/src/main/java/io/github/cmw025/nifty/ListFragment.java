@@ -77,6 +77,7 @@ public class ListFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         String uid = user.getUid();
+        String userDisplayName = user.getDisplayName();
 
         DatabaseReference tasksRef = fb.child("projects").child(projectFireBaseID).child("tasks");
         tasksRef.addValueEventListener(new ValueEventListener() {
@@ -153,6 +154,13 @@ public class ListFragment extends Fragment {
 
                                 // Retrieve current project, add task to project, and update FireBase
                                 projectRef.child("tasks").child(taskKey).setValue(task);
+
+                                // Add user to the task member list
+                                RecyclerViewCheckboxAdapter.MemberModel user = new RecyclerViewCheckboxAdapter.MemberModel(userDisplayName, true, uid);
+                                projectRef.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).child("members").child(uid).setValue(user);
                                 // fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("tasks").child(taskKey).setValue(task);
 
                                 toDo.setText("");

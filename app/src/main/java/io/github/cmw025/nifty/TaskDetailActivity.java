@@ -2,9 +2,12 @@ package io.github.cmw025.nifty;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -20,6 +23,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,7 +57,10 @@ public class TaskDetailActivity extends AppCompatActivity {
     private DatabaseReference fb;
     private DatabaseReference taskRef;
     private String projectFireBaseID;
+    private String projectFireBaseKey;
     private String uid;
+
+    private int realColor;
 
     private HashSet<MemberModel> currentMembers;
 
@@ -89,6 +96,31 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         fb = FirebaseDatabase.getInstance().getReference();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Set ToolBar color
+        Toolbar toolbar = findViewById(R.id.task_detail_toolbar);
+        projectFireBaseKey = intent.getStringExtra("projectFireBaseKey");
+        fb.child("usrs").child(uid).child("projects").child(projectFireBaseKey).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    long l = (long) data.getValue();
+                    int projectColor = (int) l;
+                    realColor = ContextCompat.getColor(TaskDetailActivity.this, projectColor);
+                    toolbar.setBackgroundColor(realColor);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
         taskRef = fb.child("tasks").child(taskFireBaseKey);
 
         taskRef.addValueEventListener(new ValueEventListener() {
@@ -227,6 +259,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         intent.putExtra("projectFireBaseID", projectFireBaseID);
         intent.putExtra("taskFireBaseKey", taskFireBaseKey);
         intent.putExtra("currentMembers", currentMembers);
+        intent.putExtra("color", realColor);
         startActivity(intent);
         overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }

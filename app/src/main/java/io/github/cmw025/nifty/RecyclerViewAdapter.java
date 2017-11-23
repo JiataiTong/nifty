@@ -116,6 +116,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             // Log.v("fb", "The key of the item clicked: " + key);
 
             Intent intent = new Intent(activity, TaskDetailActivity.class);
+            intent.putExtra("projectFireBaseKey", clickedTask.getProjectKey());
             intent.putExtra("taskFireBaseKey", clickedTask.getKey());
             intent.putExtra("taskListID", clickedTask.getId());
             activity.startActivity(intent);

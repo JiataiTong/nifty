@@ -70,17 +70,20 @@ public class ProjectActivity extends FragmentActivity {
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         // FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("color").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                long l = (long) data.getValue();
-                int projectColor = (int) l;
-                realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
-                toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
-                // Set ToolBar color
+                if (data.getValue() != null) {
+                    // Set ToolBar color
+                    long l = (long) data.getValue();
+                    int projectColor = (int) l;
+                    realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
+                    toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
+                }
             }
 
             @Override

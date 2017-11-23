@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,6 +43,11 @@ public class AddMemberActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_member);
+
+        // Set up toolbar color
+        Toolbar toolbar = findViewById(R.id.add_member_toolbar);
+        int realColor = getIntent().getIntExtra("color", 0);
+        toolbar.setBackgroundColor(realColor);
 
         // Set up list adapter
         memberModels = new ArrayList();
