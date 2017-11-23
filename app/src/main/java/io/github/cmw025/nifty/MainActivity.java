@@ -45,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
         profile.child("email").setValue(currentUser.getEmail());
         profile.child("phone").setValue(currentUser.getPhoneNumber());
 
+        // Save user profile under email index
+        RecyclerViewCheckboxAdapter.MemberModel userMemberModel = new RecyclerViewCheckboxAdapter.MemberModel(currentUser.getDisplayName(), true, currentUser.getUid());
+
+        String emailPath = currentUser.getEmail().replace('.',',');
+        fb.child("emails").child(emailPath).setValue(userMemberModel);
+
         // Default fragment to personal tasks
         Fragment fragment = new TasksAssignedToMeFragment();
         FragmentManager fm = getSupportFragmentManager();

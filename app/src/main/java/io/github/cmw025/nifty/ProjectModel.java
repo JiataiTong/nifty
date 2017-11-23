@@ -1,5 +1,6 @@
 package io.github.cmw025.nifty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +12,7 @@ import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
  * Created by troytong on 2017/11/9.
  */
 
-public class ProjectModel {
+public class ProjectModel implements Serializable{
     private String name;
     private String content;
     private Date startDate;

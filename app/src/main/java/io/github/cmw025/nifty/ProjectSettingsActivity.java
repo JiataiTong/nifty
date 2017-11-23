@@ -1,14 +1,19 @@
 package io.github.cmw025.nifty;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -342,8 +347,101 @@ public class ProjectSettingsActivity extends AppCompatActivity {
     }
 
     public void inviteMembers(View view) {
-        Intent intent = new Intent(ProjectSettingsActivity.this, InviteMemberActivity.class);
-        startActivity(intent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Invite New Member");
+        // I'm using fragment here so I'm using getView() to provide ViewGroup
+        // but you can provide here any other instance of ViewGroup from your Fragment / Activity
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.invite_new_member_dialog, findViewById(android.R.id.content), false);
+        // Set up the input
+        final EditText input = (EditText) viewInflated.findViewById(R.id.invite_new_member_input);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        builder.setView(viewInflated);
+
+        // Set up the buttons
+        builder.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                String email = input.getText().toString();
+                email = email.replace(".", ",");
+                fb.child("emails").child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot data) {
+                        // If email data exists on server, add invitee to the project
+                        if (data.getValue() != null) {
+                            RecyclerViewCheckboxAdapter.MemberModel invitee = data.getValue(RecyclerViewCheckboxAdapter.MemberModel.class);
+                            // Add invitee as project member
+                            fb.child("projects").child(projectFireBaseID).child("members").child(invitee.getUid()).setValue(invitee);
+
+
+                            // Send project info to invitee
+                            fb.child("projects").child(projectFireBaseID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot data) {
+                                    if (data.getValue() != null) {
+                                        ProjectModel project = data.getValue(ProjectModel.class);
+                                        fb.child("usrs").child(invitee.getUid()).child("projects").child(projectFireBaseID).setValue(project);
+
+                                        // Send member list to invitee
+                                        fb.child("projects").child(projectFireBaseID).child("members").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot data) {
+                                                for (DataSnapshot child : data.getChildren()) {
+                                                    RecyclerViewCheckboxAdapter.MemberModel member = child.getValue(RecyclerViewCheckboxAdapter.MemberModel.class);
+                                                    fb.child("usrs").child(invitee.getUid()).child("projects").child(projectFireBaseID).child("members").child(member.getUid()).setValue(member);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                        // Send task list to invitee
+                                        fb.child("projects").child(projectFireBaseID).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot data) {
+                                                for (DataSnapshot child : data.getChildren()) {
+                                                    TaskModel task = child.getValue(TaskModel.class);
+                                                    fb.child("usrs").child(invitee.getUid()).child("projects").child(projectFireBaseID).child("tasks").child(task.getKey()).setValue(task);
+                                                    fb.child("usrs").child(invitee.getUid()).child("tasks").child(task.getKey()).setValue(task);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            Snackbar.make(findViewById(R.id.dis_shit), "Invitation success! New member added.", Snackbar.LENGTH_LONG).show();
+                        }
+
+                        // If email data not found on server, send out invitation email
+                        else {
+                            Snackbar.make(findViewById(R.id.dis_shit), "Email not found on server, invitation sent.", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        });
+
+        builder.show();
     }
 
     public void goBack(View view) {
