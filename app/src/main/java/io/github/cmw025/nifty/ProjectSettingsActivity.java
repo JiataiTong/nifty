@@ -1,5 +1,7 @@
 package io.github.cmw025.nifty;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -18,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -32,7 +35,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 public class ProjectSettingsActivity extends AppCompatActivity {
+
+    private int mYear, mMonth, mDay;
+
+    private Button startDateBtn;
+    private Button dueDateBtn;
 
     private int color;
     private String uid;
@@ -46,6 +56,14 @@ public class ProjectSettingsActivity extends AppCompatActivity {
     private Switch notifyMileStones;
     private Switch notifyMyTasks;
     private Switch notifyAllTasks;
+
+    private int startDateMonth;
+    private int startDateDay;
+    private int startDateYear;
+
+    private int dueDateMonth;
+    private int dueDateDay;
+    private int dueDateYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +123,70 @@ public class ProjectSettingsActivity extends AppCompatActivity {
 
     public void initDate() {
         // Date
+        startDateBtn = findViewById(R.id.start_date);
+        dueDateBtn = findViewById(R.id.due_date);
+
+
+
+        fb.child("projects").child(projectFireBaseID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue()!= null) {
+                    ProjectModel project = data.getValue(ProjectModel.class);
+                    Date starDate = project.getStartDate();
+                    Date dueDate = project.getDueDate();
+
+                    mYear = starDate.getYear() + 1900;
+                    mMonth = starDate.getMonth();
+                    mDay = starDate.getDate();
+                    startDateBtn.setText(new StringBuffer().append(mMonth + 1).append("/").append(mDay).append("/").append(mYear).append(" "));
+                    startDateBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                                    ProjectSettingsActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                    startDateBtn.setText(new StringBuffer().append(monthOfYear + 1).append("/").append(dayOfMonth).append("/").append(year).append(" "));
+                                    startDateDay = dayOfMonth;
+                                    startDateMonth = monthOfYear;
+                                    startDateYear = year;
+                                }
+
+                            }, mYear, mMonth, mDay);
+                            datePickerDialog.show();
+                        }
+                    });
+
+                    mYear = dueDate.getYear() + 1900;
+                    mMonth = dueDate.getMonth();
+                    mDay = dueDate.getDate();
+                    dueDateBtn.setText(new StringBuffer().append(mMonth + 1).append("/").append(mDay).append("/").append(mYear).append(" "));
+                    dueDateBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(ProjectSettingsActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                    dueDateBtn.setText(new StringBuffer().append(monthOfYear + 1).append("/").append(dayOfMonth).append("/").append(year).append(" "));
+                                    dueDateDay = dayOfMonth;
+                                    dueDateMonth = monthOfYear;
+                                    dueDateYear = year;
+                                }
+
+                            }, mYear, mMonth, mDay);
+                            datePickerDialog.show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
     }
 
     public void initNotification() {
@@ -461,6 +543,14 @@ public class ProjectSettingsActivity extends AppCompatActivity {
         String newProjectName = editProjectName.getText().toString();
         fb.child("projects").child(projectFireBaseID).child("name").setValue(newProjectName);
         fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("name").setValue(newProjectName);
+
+
+        Date startDate = new Date(startDateYear - 1900, startDateMonth, startDateDay);
+        Date dueDate = new Date(dueDateYear - 1900, dueDateMonth, dueDateDay);
+        fb.child("projects").child(projectFireBaseID).child("startDate").setValue(startDate);
+        fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("startDate").setValue(startDate);
+        fb.child("projects").child(projectFireBaseID).child("dueDate").setValue(dueDate);
+        fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("dueDate").setValue(dueDate);
 
         finish();
     }

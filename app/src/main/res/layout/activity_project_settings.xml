@@ -201,24 +201,27 @@
                 android:textStyle="bold"/>
             <TextView
                 android:textColor="@color/medium_gray_darker"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="100dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginLeft="85dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:textSize="18dp"
                 android:text="START"/>
 
             <TextView
                 android:textColor="@color/medium_gray_darker"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="13dp"
                 android:layout_marginRight="20dp"
                 android:layout_gravity="right"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="DUE"/>
 
             <Button
+                android:id="@+id/start_date"
                 android:textColor="@color/dark_gray_lighter"
                 android:text="08/01/13"
                 android:background="@color/light_gray_darker"
@@ -229,6 +232,7 @@
                 android:drawableEnd="@drawable/calendar" />
 
             <Button
+                android:id="@+id/due_date"
                 android:textColor="@color/dark_gray_lighter"
                 android:text="08/29/13"
                 android:drawableRight="@drawable/calendar"
