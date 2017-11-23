@@ -344,6 +344,8 @@ public class ProjectSettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     public void inviteMembers(View view) {

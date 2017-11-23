@@ -37,22 +37,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.6">
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_margin="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="hola!"
-            android:textSize="16sp"
-            android:gravity="bottom|center"
-            android:layout_marginTop="30dp"
-            android:paddingTop="30sp"
-            android:textColor="#63ADC7"
-            />
+        android:layout_weight="0.7">
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"

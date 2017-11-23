@@ -10,7 +10,7 @@
         android:id="@+id/add_member_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="#63ADC7"
+        android:background="@color/dark_gray_darker"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">

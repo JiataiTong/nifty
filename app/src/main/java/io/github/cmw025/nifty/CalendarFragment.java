@@ -243,6 +243,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     int realColor = ContextCompat.getColor(getContext(), projectColor);
                     todayDecorator = new TodayDecorator(realColor);
                     calendarView.addDecorator(todayDecorator);
+                    calendarView.setSelectionColor(realColor);
 
                     // Project name
                     String colorString = Integer.toString(realColor, 16);
@@ -278,8 +279,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         //If you change a decorate, you need to invalidate decorators
-        TextView textView = (TextView) getActivity().findViewById(R.id.date);
-        textView.setText(getSelectedDatesString());
+//        TextView textView = (TextView) getActivity().findViewById(R.id.date);
+//        textView.setText(getSelectedDatesString());
 //        decorator.setDate(date.getDate());
 //        widget.invalidateDecorators();
     }
