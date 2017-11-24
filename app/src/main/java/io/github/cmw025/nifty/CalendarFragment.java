@@ -144,11 +144,12 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         activity = getActivity();
 
         projectList = new ArrayList<>();
+        tasks = new ArrayList<>();
+        dates = new ArrayList<>();
+
         initFireBase();
         initSpinner();
-
-
-        // initEditText();
+        initEditText();
     }
 
     public void initFireBase() {
@@ -170,7 +171,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     // Helper method to fill spinner with project list
     public void fillSpinnerWithProjectList() {
-        fb.child("usrs").child(uid).child("projects").addValueEventListener(new ValueEventListener() {
+        fb.child("usrs").child(uid).child("projects").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 projectList = new ArrayList<>();
@@ -231,11 +232,13 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         Date today = new Date();
         // Default to placeholder if project list is empty
-        firstProject = new ProjectModel("Project List", "", today, today, 0, "placeholder", R.color.light_red);
+        firstProject = new ProjectModel("Project List", "", today, today, 0, uid, R.color.light_red);
 
         if (!projectList.isEmpty()) {
             firstProject = projectList.get(0);
         }
+
+        projectFireBaseID = firstProject.getKey();
 
         int realColor = ContextCompat.getColor(getContext(), firstProject.getColor());
         calendarView.setSelectionColor(realColor);
@@ -312,6 +315,9 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
                                 toDo.setText("");
                                 dates.add(calendarView.getSelectedDate());
+                                tasks.add(task);
+                                // Trigger calendarView's update function to update list
+                                onDateSelected(calendarView, calendarView.getSelectedDate(), true);
                             }
                             return false; // consume.
                         }
@@ -343,6 +349,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
         ProjectModel project = (ProjectModel) item;
         String projectKey = project.getKey();
+        projectFireBaseID = projectKey;
+        calendarView.removeDecorators();
 
         // Query FireBase and update UI (calendar decorators and spinner project name)
         fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -357,9 +365,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     // Add task due date to calendar
                     dates.add(CalendarDay.from(task.getDueDate()));
                 }
-
-                // Remove old decorators
-                // calendarView.removeDecorators();
 
                 // Update decorators
                 int realColor = ContextCompat.getColor(getContext(), project.getColor());
