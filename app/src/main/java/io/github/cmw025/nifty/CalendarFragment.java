@@ -178,7 +178,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
                     projectList.add(project);
-                    Log.v("project", project.toString());
                 }
 //                // Initialize event decorator for first project in the list
 //                if (!projectList.isEmpty() && getActivity()!= null) {
@@ -241,7 +240,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         projectFireBaseID = firstProject.getKey();
 
         int realColor = ContextCompat.getColor(getContext(), firstProject.getColor());
-        calendarView.setSelectionColor(realColor);
+        calendarView.setSelectionColor(getPastelColor(firstProject.getColor()));
 
         fb.child("projects").child(firstProject.getKey()).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -368,7 +367,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
                 // Update decorators
                 int realColor = ContextCompat.getColor(getContext(), project.getColor());
-                calendarView.setSelectionColor(realColor);
+                int selectionColor = getPastelColor(project.getColor());
+                calendarView.setSelectionColor(selectionColor);
 
                 todayDecorator = new TodayDecorator(realColor);
                 eventDecorator = new EventDecorator(realColor, dates);
@@ -465,5 +465,69 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
             h = 31 * h + chars[i];
         }
         return h;
+    }
+
+    private int getDarkerColor(int color) {
+        int darkerColor = color;
+        switch (color) {
+            case R.color.light_red:
+                darkerColor = R.color.dark_red;
+                break;
+            case R.color.light_orange:
+                darkerColor = R.color.dark_orange;
+                break;
+            case R.color.light_aqua:
+                darkerColor = R.color.dark_aqua;
+                break;
+            case R.color.light_blue:
+                darkerColor = R.color.dark_blue;
+                break;
+            case R.color.light_cyan:
+                darkerColor = R.color.dark_cyan;
+                break;
+            case R.color.light_purple:
+                darkerColor = R.color.dark_purple;
+                break;
+            case R.color.light_green:
+                darkerColor = R.color.dark_green;
+                break;
+            case R.color.light_yellow:
+                darkerColor = R.color.dark_yellow;
+                break;
+        }
+        darkerColor = ContextCompat.getColor(getContext(), darkerColor);
+        return darkerColor;
+    }
+
+    private int getPastelColor(int color) {
+        int pastelColor = color;
+        switch (color) {
+            case R.color.light_red:
+                pastelColor = R.color.pastel_red;
+                break;
+            case R.color.light_orange:
+                pastelColor = R.color.pastel_orange;
+                break;
+            case R.color.light_aqua:
+                pastelColor = R.color.pastel_aqua;
+                break;
+            case R.color.light_blue:
+                pastelColor = R.color.pastel_blue;
+                break;
+            case R.color.light_cyan:
+                pastelColor = R.color.pastel_cyan;
+                break;
+            case R.color.light_purple:
+                pastelColor = R.color.pastel_purple;
+                break;
+            case R.color.light_green:
+                pastelColor = R.color.pastel_green;
+                break;
+            case R.color.light_yellow:
+                pastelColor = R.color.pastel_yellow;
+                break;
+        }
+        pastelColor = ContextCompat.getColor(getContext(), pastelColor);
+        return pastelColor;
     }
 }
