@@ -58,10 +58,44 @@
         android:gravity="top"
         android:orientation="vertical"
         android:background="#2a63ADC7">
-        <fragment android:name="io.github.cmw025.nifty.ListFragmentPersonal"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:weight="http://schemas.android.com/tools"
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:background="#2a63ADC7"
+            android:orientation="vertical"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
+            <EditText
+                android:imeOptions="actionDone"
+                android:id="@+id/add_todo"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:inputType="text"
+                android:layout_height="@dimen/list_item_height"
+                android:hint="Add a to-do..."
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
+                android:drawableLeft="@drawable/ic_add_white_24dp"
+                android:drawablePadding="10dp"
+                android:background="#aad3adc7"/>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:padding="10dp"
+                style="@style/myRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
 
     </FrameLayout>
 

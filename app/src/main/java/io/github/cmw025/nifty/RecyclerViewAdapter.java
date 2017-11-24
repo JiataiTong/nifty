@@ -4,6 +4,7 @@ package io.github.cmw025.nifty;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
@@ -21,10 +28,14 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowViewHolder> implements DraggableItemAdapter<RecyclerViewAdapter.RowViewHolder> {
     List<TaskModel> mItems;
+    DatabaseReference fb;
+    String uid;
 
     public RecyclerViewAdapter() {
         setHasStableIds(true); // this is required for D&D feature.
         mItems = new ArrayList<>();
+        fb = FirebaseDatabase.getInstance().getReference();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     @Override
@@ -43,6 +54,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(RowViewHolder holder, int position) {
         TaskModel item = mItems.get(position);
         holder.textView.setText(item.getName());
+
+        fb.child("usrs").child(uid).child("projects").child(item.getProjectKey()).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    long l = (long) data.getValue();
+                    int i = (int) l;
+                    holder.colorTag.setBackgroundResource(i);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -88,6 +115,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mItems = newList;
         notifyDataSetChanged();
     }
+
+    public void clear() {
+        mItems.clear();
+        notifyDataSetChanged();
+    }
 //
 //    static class MyItem {
 //        public final long id;
@@ -102,11 +134,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class RowViewHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
 
         TextView textView;
+        TextView colorTag;
 
         RowViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             textView = itemView.findViewById(android.R.id.text1);
+            colorTag = itemView.findViewById(R.id.color_tag);
         }
 
         @Override

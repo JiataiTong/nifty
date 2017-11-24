@@ -283,6 +283,8 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef2.child("content").setValue(taskContent.getText().toString());
         taskRef2.child("dueDate").setValue(date);
 
+        fb.child("usrs").child(uid).child("tasks").child(taskFireBaseKey).child("name").setValue(taskName.getText().toString());
+
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }

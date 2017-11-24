@@ -21,7 +21,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -41,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -64,6 +67,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -74,158 +78,128 @@ import me.nlmartian.silkcal.DayPickerView;
 import me.nlmartian.silkcal.SimpleMonthAdapter;
 
 
-public class CalendarFragment extends Fragment implements OnDateSelectedListener {
+public class CalendarFragment extends Fragment implements OnDateSelectedListener, MaterialSpinner.OnItemSelectedListener{
 
-    // private DayPickerView calendarView;
-    private String uid;
+    private Activity activity;
+
     private DatabaseReference fb;
+    private String userDisplayName;
+    private String projectFireBaseID;
+    private String uid;
+
+    private ArrayList<CalendarDay> dates;
+    private ArrayList<TaskModel> tasks;
     private ArrayList<ProjectModel> projectList;
+
     private MaterialCalendarView calendarView;
     private TodayDecorator todayDecorator;
-    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
+    private EventDecorator eventDecorator;
+
+    private MaterialSpinner spinner;
+    private ArrayAdapter<ProjectModel> spinnerArrayAdapter;
+    private RecyclerViewAdapter recyclerViewAdapter;
+
+    private ProjectModel firstProject;
+
+    // Required empty public constructor
     public CalendarFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
+        // Inflate the layout for list fragment
+        View v = inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        // Setup D&D feature and RecyclerView
+        RecyclerViewDragDropManager dragMgr = new RecyclerViewDragDropManager();
+
+        dragMgr.setInitiateOnMove(false);
+        dragMgr.setInitiateOnLongPress(true);
+
+        RecyclerView recyclerView =  (RecyclerView) v.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager mgr = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(mgr);
+
+        // Divider decoration
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), mgr.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        // Set Adapter
+        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerView.setAdapter(dragMgr.createWrappedAdapter(recyclerViewAdapter));
+
+        // NOTE: need to disable change animations to ripple effect work properly
+        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        dragMgr.attachRecyclerView(recyclerView);
+
+        return v;
     }
+
 
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
-        Activity activity = getActivity();
-        calendarView = (MaterialCalendarView) activity.findViewById(R.id.calendarView);
+        activity = getActivity();
 
-        //calendarView.setTopbarVisible(false);
-
-        // Set up FireBase for project list
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        fb = FirebaseDatabase.getInstance().getReference();
-
-        MaterialSpinner spinner = (MaterialSpinner) activity.findViewById(R.id.spinner);
         projectList = new ArrayList<>();
-        // Initializing an ArrayAdapter
-        ArrayAdapter<ProjectModel> spinnerArrayAdapter = new ArrayAdapter<ProjectModel>(
-                getActivity(),R.layout.spinner_textview_align,projectList
+        initFireBase();
+        initSpinner();
+
+
+        // initEditText();
+    }
+
+    public void initFireBase() {
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userDisplayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        fb = FirebaseDatabase.getInstance().getReference();
+    }
+
+    public void initSpinner() {
+        spinner = activity.findViewById(R.id.spinner);
+        spinnerArrayAdapter = new ArrayAdapter<ProjectModel>(
+                activity, R.layout.spinner_textview_align, projectList
         );
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_textview_align);
         spinner.setAdapter(spinnerArrayAdapter);
-        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                // Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
-                ProjectModel project = (ProjectModel) item;
-                String projectKey = project.getKey();
+        spinner.setOnItemSelectedListener(this);
+        fillSpinnerWithProjectList();
+    }
 
-
-                fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot data) {
-
-                        ArrayList<CalendarDay> dates = new ArrayList<>();
-                        ArrayList<TaskModel> tasks = new ArrayList<>();
-                        for (DataSnapshot child : data.getChildren()) {
-                            // Add to task list
-                            TaskModel task = child.getValue(TaskModel.class);
-                            tasks.add(task);
-
-                            // Add task due date to calendar
-                            Date dueDate = task.getDueDate();
-                            CalendarDay day = CalendarDay.from(dueDate);
-                            dates.add(day);
-                            // Snackbar.make(view, "Looped through task:  " + task, Snackbar.LENGTH_LONG).show();
-                            // Log.v("task", task.getName());
-                        }
-
-                        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
-                            @Override
-                            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                                if (dates.contains(date)) {
-                                    // Snackbar.make(getView(), "Date  " + date, Snackbar.LENGTH_LONG).show();
-                                    ArrayList<TaskModel> tasksOnSelectedDay = new ArrayList<>();
-                                    for (TaskModel task: tasks) {
-                                        Date dueDate = task.getDueDate();
-                                        CalendarDay day = CalendarDay.from(dueDate);
-                                        if (day.equals(date)) {
-                                            tasksOnSelectedDay.add(task);
-                                            Snackbar.make(getView(), "Task  " + task, Snackbar.LENGTH_LONG).show();
-                                        }
-                                    }
-                                    // Get adapter to list fragment SOME MAGIC HERE
-                                    // RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
-                                    // Update list
-                                    // mAdapter.updateItems(tasksOnSelectedDay);
-                                }
-                            }
-                        });
-
-                        // Log.v("task", "Done with looping tasks.");
-
-                        // Remove old decorators
-                        calendarView.removeDecorators();
-
-                        // Add new decorators
-                        int projectColor = project.getColor();
-                        int realColor = ContextCompat.getColor(getContext(), projectColor);
-
-                        calendarView.setSelectionColor(realColor);
-                        todayDecorator = new TodayDecorator(realColor);
-                        calendarView.addDecorator(todayDecorator);
-
-                        EventDecorator eventDecorator = new EventDecorator(realColor, dates);
-                        calendarView.addDecorator(eventDecorator);
-
-                        // Project name
-                        String colorString = Integer.toString(realColor, 16);
-                        // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
-                        String text = "<font color=#ffffff>"+ project.getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
-                        spinner.setText(Html.fromHtml(text));
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-//
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-//            {
-//                String selectedItem = parent.getItemAtPosition(position).toString();
-//                if(selectedItem.equals("Add new category"))
-//                {
-//                    // do your stuff
-//                }
-//            } // to close the onItemSelected
-//            public void onNothingSelected(AdapterView<?> parent)
-//            {
-//
-//            }
-        });
-
+    // Helper method to fill spinner with project list
+    public void fillSpinnerWithProjectList() {
         fb.child("usrs").child(uid).child("projects").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 projectList = new ArrayList<>();
                 for (DataSnapshot child : data.getChildren()) {
                     ProjectModel project = child.getValue(ProjectModel.class);
-                    String projectKey = project.getKey();
                     projectList.add(project);
-//                    fb.child("usrs").child(uid).child("projects").child(projectKey).child("tasks").addValueEventListener(new ValueEventListener() {
+                    Log.v("project", project.toString());
+                }
+//                // Initialize event decorator for first project in the list
+//                if (!projectList.isEmpty() && getActivity()!= null) {
+//                    fb.child("usrs").child(uid).child("projects").child(projectList.get(0).getKey()).child("tasks").addValueEventListener(new ValueEventListener() {
 //                        @Override
 //                        public void onDataChange(DataSnapshot tasks) {
-//                            List<TaskModel> newTaskList = new ArrayList<>();
+//                            ArrayList<CalendarDay> dates = new ArrayList<>();
 //                            for (DataSnapshot task : tasks.getChildren()) {
 //                                TaskModel mTask = task.getValue(TaskModel.class);
-//                                newTaskList.add(mTask);
+//                                Date dueDate = mTask.getDueDate();
+//                                CalendarDay day = CalendarDay.from(dueDate);
+//                                dates.add(day);
 //                            }
-//                            // project.replaceTasks(newTaskList);
-//                            projectList.add(project);
+//
+//                            int projectColor = projectList.get(0).getColor();
+//                            int realColor = 0;
+//                            if (getContext()!= null) {
+//                                realColor = ContextCompat.getColor(getContext(), projectColor);
+//                            }
+//
+//                            EventDecorator eventDecorator = new EventDecorator(realColor, dates);
+//                            calendarView.addDecorator(eventDecorator);
 //                        }
 //
 //                        @Override
@@ -233,23 +207,14 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //
 //                        }
 //                    });
-                }
+//                }
+
+
+                // Update spinner list
                 spinnerArrayAdapter.clear();
                 spinnerArrayAdapter.addAll(projectList);
-                // UI default to first project
-                if (!projectList.isEmpty() && getActivity()!= null) {
-                    // Calendar decorator color
-                    int projectColor = projectList.get(0).getColor();
-                    int realColor = ContextCompat.getColor(getContext(), projectColor);
-                    todayDecorator = new TodayDecorator(realColor);
-                    calendarView.addDecorator(todayDecorator);
-                    calendarView.setSelectionColor(realColor);
-
-                    // Project name
-                    String colorString = Integer.toString(realColor, 16);
-                    // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
-                    String text = "<font color=#ffffff>"+ projectList.get(0).getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
-                    spinner.setText(Html.fromHtml(text));
+                if (getActivity()!= null) {
+                    initCalendar();
                 }
             }
 
@@ -258,43 +223,168 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
             }
         });
-        //new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
-//
-//        EditText editText = (EditText) activity.findViewById(R.id.add_task);
-//        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//
-//                if (actionId == EditorInfo.IME_ACTION_SEND) {
-//                    EditText editText = (EditText) getActivity().findViewById(R.id.add_task);
-//                    editText.setText("");
-//                    // editText.clearFocus();
-//                }
-//                return false;
-//            }
-//        });
+    }
 
+    public void initCalendar() {
+        calendarView = (MaterialCalendarView) activity.findViewById(R.id.calendarView);
+        calendarView.setOnDateChangedListener(this);
+
+        Date today = new Date();
+        // Default to placeholder if project list is empty
+        firstProject = new ProjectModel("Project List", "", today, today, 0, "placeholder", R.color.light_red);
+
+        if (!projectList.isEmpty()) {
+            firstProject = projectList.get(0);
+        }
+
+        int realColor = ContextCompat.getColor(getContext(), firstProject.getColor());
+        calendarView.setSelectionColor(realColor);
+
+        fb.child("projects").child(firstProject.getKey()).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                dates = new ArrayList<>();
+                for (DataSnapshot child : data.getChildren()) {
+                    TaskModel task = child.getValue(TaskModel.class);
+                    dates.add(CalendarDay.from(task.getDueDate()));
+                }
+                todayDecorator = new TodayDecorator(realColor);
+                calendarView.addDecorator(todayDecorator);
+
+                if (!dates.isEmpty()) {
+                    eventDecorator = new EventDecorator(realColor, dates);
+                    calendarView.addDecorator(eventDecorator);
+                }
+                // Update UI to display project name
+                String colorString = Integer.toString(realColor, 16);
+                String text = "<font color=#ffffff>"+ firstProject.getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                spinner.setText(Html.fromHtml(text));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void initEditText() {
+        // Set up add new task
+        EditText toDo = activity.findViewById(R.id.add_todo);
+        toDo.setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, @NonNull KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                                actionId == EditorInfo.IME_ACTION_DONE ||
+                                event == null ||
+                                event.getAction() == KeyEvent.ACTION_DOWN &&
+                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                            String title = toDo.getText().toString();
+
+                            if (!TextUtils.isEmpty(title)) {
+                                // Get reference to "fb/tasks/new_task"
+                                DatabaseReference ref = fb.child("tasks").push();
+                                String taskKey = ref.getKey();
+
+                                // Create TaskModel
+                                long id = longHash(taskKey);
+                                TaskModel task = new TaskModel(title, "", id, taskKey, projectFireBaseID);
+                                task.setDueDate(calendarView.getSelectedDate().getDate());
+
+                                // Add task to FireBase
+                                ref.setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("tasks").child(taskKey).setValue(task);
+
+                                // Get project ref
+                                DatabaseReference projectRef = fb.child("projects").child(projectFireBaseID);
+
+                                // Retrieve current project, add task to project, and update FireBase
+                                projectRef.child("tasks").child(taskKey).setValue(task);
+
+                                // Add user to the task member list
+                                RecyclerViewCheckboxAdapter.MemberModel user = new RecyclerViewCheckboxAdapter.MemberModel(userDisplayName, true, uid);
+                                projectRef.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+
+                                toDo.setText("");
+                                dates.add(calendarView.getSelectedDate());
+                            }
+                            return false; // consume.
+                        }
+                        return false; // pass on to other listeners.
+                    }
+                });
     }
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        //If you change a decorate, you need to invalidate decorators
-//        TextView textView = (TextView) getActivity().findViewById(R.id.date);
-//        textView.setText(getSelectedDatesString());
-//        decorator.setDate(date.getDate());
-//        widget.invalidateDecorators();
+        // Update list view
+        if (dates.contains(date)) {
+            ArrayList<TaskModel> tasksOnSelectedDay = new ArrayList<>();
+            for (TaskModel task: tasks) {
+                CalendarDay day = CalendarDay.from(task.getDueDate());
+                if (day.equals(date)) {
+                    tasksOnSelectedDay.add(task);
+                }
+            }
+            recyclerViewAdapter.updateItems(tasksOnSelectedDay);
+        }
+
+        else {
+            recyclerViewAdapter.clear();
+        }
     }
 
-    private String getSelectedDatesString() {
-        CalendarDay date = calendarView.getSelectedDate();
-        if (date == null) {
-            return "No Selection";
-        }
-        return String.format("Tasks on " + FORMATTER.format(date.getDate()));
+    @Override
+    public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+        ProjectModel project = (ProjectModel) item;
+        String projectKey = project.getKey();
+
+        // Query FireBase and update UI (calendar decorators and spinner project name)
+        fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                dates = new ArrayList<>();
+                tasks = new ArrayList<>();
+                for (DataSnapshot child : data.getChildren()) {
+                    // Add to task list
+                    TaskModel task = child.getValue(TaskModel.class);
+                    tasks.add(task);
+                    // Add task due date to calendar
+                    dates.add(CalendarDay.from(task.getDueDate()));
+                }
+
+                // Remove old decorators
+                // calendarView.removeDecorators();
+
+                // Update decorators
+                int realColor = ContextCompat.getColor(getContext(), project.getColor());
+                calendarView.setSelectionColor(realColor);
+
+                todayDecorator = new TodayDecorator(realColor);
+                eventDecorator = new EventDecorator(realColor, dates);
+
+                calendarView.addDecorator(todayDecorator);
+                calendarView.addDecorator(eventDecorator);
+
+                // Set spinner project name
+                String colorString = Integer.toString(realColor, 16);
+                String text = "<font color=#ffffff>"+ project.getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                spinner.setText(Html.fromHtml(text));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private class TodayDecorator implements DayViewDecorator {
-
         private final CalendarDay today;
         private final Drawable backgroundDrawable;
 
@@ -326,7 +416,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     }
 
     private class EventDecorator implements DayViewDecorator {
-
         private int color;
         private HashSet<CalendarDay> dates;
         private final ShapeDrawable backgroundDrawable;
@@ -361,39 +450,15 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         }
     }
 
-    /**
-     * Simulate an API call to show how to add decorators
-     */
-    private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
+    // Helper function to create RecyclerView ID from task FireBase ID
+    private static long longHash(String string) {
+        long h = 98764321261L;
+        int l = string.length();
+        char[] chars = string.toCharArray();
 
-        @Override
-        protected List<CalendarDay> doInBackground(@NonNull Void... voids) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, -2);
-            ArrayList<CalendarDay> dates = new ArrayList<>();
-            for (int i = 0; i < 30; i++) {
-                CalendarDay day = CalendarDay.from(calendar);
-                dates.add(day);
-                calendar.add(Calendar.DATE, 5);
-            }
-
-            return dates;
+        for (int i = 0; i < l; i++) {
+            h = 31 * h + chars[i];
         }
-
-        @Override
-        protected void onPostExecute(@NonNull List<CalendarDay> calendarDays) {
-            super.onPostExecute(calendarDays);
-
-            if (getActivity().isFinishing()) {
-                return;
-            }
-
-            calendarView.addDecorator(new EventDecorator(Color.RED, calendarDays));
-        }
+        return h;
     }
 }
