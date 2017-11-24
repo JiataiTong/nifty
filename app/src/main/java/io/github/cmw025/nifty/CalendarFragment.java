@@ -269,6 +269,10 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
             }
         });
+
+        if (!projectList.isEmpty()) {
+            onItemSelected(spinner, 0, 0, firstProject);
+        }
     }
 
     public void initEditText() {
@@ -316,6 +320,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                                 toDo.setText("");
                                 dates.add(calendarView.getSelectedDate());
                                 tasks.add(task);
+                                eventDecorator = new EventDecorator(eventDecorator.color, dates);
+                                calendarView.addDecorator(eventDecorator);
                                 // Trigger calendarView's update function to update list
                                 onDateSelected(calendarView, calendarView.getSelectedDate(), true);
                             }
