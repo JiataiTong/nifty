@@ -240,7 +240,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         projectFireBaseID = firstProject.getKey();
 
         int realColor = ContextCompat.getColor(getContext(), firstProject.getColor());
-        calendarView.setSelectionColor(getPastelColor(firstProject.getColor()));
+        int pastelColor = getPastelColor(firstProject.getColor());
+        calendarView.setSelectionColor(realColor);
 
         fb.child("projects").child(firstProject.getKey()).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -254,7 +255,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 calendarView.addDecorator(todayDecorator);
 
                 if (!dates.isEmpty()) {
-                    eventDecorator = new EventDecorator(realColor, dates);
+                    eventDecorator = new EventDecorator(pastelColor, dates);
                     calendarView.addDecorator(eventDecorator);
                 }
                 // Update UI to display project name
@@ -367,11 +368,11 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
                 // Update decorators
                 int realColor = ContextCompat.getColor(getContext(), project.getColor());
-                int selectionColor = getPastelColor(project.getColor());
-                calendarView.setSelectionColor(selectionColor);
+                int pastelColor = getPastelColor(project.getColor());
+                calendarView.setSelectionColor(realColor);
 
                 todayDecorator = new TodayDecorator(realColor);
-                eventDecorator = new EventDecorator(realColor, dates);
+                eventDecorator = new EventDecorator(pastelColor, dates);
 
                 calendarView.addDecorator(todayDecorator);
                 calendarView.addDecorator(eventDecorator);
