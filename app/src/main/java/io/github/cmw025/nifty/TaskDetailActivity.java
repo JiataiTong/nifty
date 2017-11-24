@@ -239,7 +239,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     public void display() {
-        dueButton.setText(new StringBuffer().append(mMonth + 1).append("-").append(mDay).append("-").append(mYear).append(" "));
+        dueButton.setText(new StringBuffer().append(mMonth + 1).append("/").append(mDay).append("/").append(mYear).append(" "));
     }
 
     private DatePickerDialog.OnDateSetListener mdateListener = new DatePickerDialog.OnDateSetListener() {

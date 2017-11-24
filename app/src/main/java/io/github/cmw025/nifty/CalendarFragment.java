@@ -277,7 +277,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     public void initEditText() {
         // Set up add new task
-        EditText toDo = activity.findViewById(R.id.add_todo);
+        EditText toDo = activity.findViewById(R.id.add_todo_calendar);
         toDo.setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override

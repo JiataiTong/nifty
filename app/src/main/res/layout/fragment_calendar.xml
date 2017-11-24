@@ -71,7 +71,7 @@
             android:focusableInTouchMode="true">
             <EditText
                 android:imeOptions="actionDone"
-                android:id="@+id/add_todo"
+                android:id="@+id/add_todo_calendar"
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:maxLines="1"
