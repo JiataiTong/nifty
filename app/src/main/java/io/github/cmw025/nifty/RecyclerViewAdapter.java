@@ -109,24 +109,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
-//        mItems.get(fromPosition).position = toPosition;
-//        int start = fromPosition;
-//        int finish = toPosition;
-//        if (fromPosition > toPosition) {
-//            start = toPosition;
-//            finish = fromPosition;
-//        }
-//        for (int i = start + 1; i < finish; i++) {
-//            mItems.get(i).position += 1;
-//        }
-//        updatePriorityForUser();
     }
 
     public void updateItems(List<TaskModel> newList) {
         mItems = newList;
-//        for (int i = 0; i < mItems.size(); i++) {
-//            mItems.get(i).position = i;
-//        }
         notifyDataSetChanged();
     }
 
@@ -134,57 +120,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mItems.clear();
         notifyDataSetChanged();
     }
-
-    public void sortItems() {
-        Collections.sort(mItems, new Comparator<TaskModel>() {
-            @Override
-            public int compare(TaskModel lhs, TaskModel rhs) {
-                // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-                return lhs.position > rhs.position ? -1 : (lhs.position < rhs.position) ? 1 : 0;
-            }
-        });
-        notifyDataSetChanged();
-    }
-
-    public void writeBackPosition() {
-        if (!mItems.isEmpty()) {
-            for (TaskModel task : mItems) {
-                fb.child("usrs").child(uid).child("tasks").child(task.getKey()).child("position").setValue(task.position);
-            }
-        }
-    }
-
-    public void updatePriorityForUser() {
-        for (TaskModel task : mItems) {
-            fb.child("usrs").child(uid).child("tasks").child(task.getKey()).child("position").setValue(task.position);
-        }
-    }
-
-    public void printPriority() {
-        for (TaskModel task : mItems) {
-            Log.v("task", "task: " + task.getName() + ", position: " + task.getPosition());
-        }
-    }
-
-    public void updatePriorityForCalendar() {}
-
-//    public void updatePriorityForTeam() {
-//        for (TaskModel task : mItems) {
-//            task.getKey();
-//            fb.child("usrs")
-//        }
-//    }
-
-//
-//    static class MyItem {
-//        public final long id;
-//        public final String text;
-//
-//        public MyItem(long id, String text) {
-//            this.id = id;
-//            this.text = text;
-//        }
-//    }
 
     class RowViewHolder extends AbstractDraggableItemViewHolder implements View.OnClickListener {
 
