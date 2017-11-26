@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +24,8 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -55,21 +58,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TaskModel item = mItems.get(position);
         holder.textView.setText(item.getName());
 
-        fb.child("usrs").child(uid).child("projects").child(item.getProjectKey()).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot data) {
-                if (data.getValue() != null) {
-                    long l = (long) data.getValue();
-                    int i = (int) l;
-                    holder.colorTag.setBackgroundResource(i);
+        if (item.getProjectKey() != null) {
+            fb.child("usrs").child(uid).child("projects").child(item.getProjectKey()).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot data) {
+                    if (data.getValue() != null) {
+                        long l = (long) data.getValue();
+                        int i = (int) l;
+                        holder.colorTag.setBackgroundResource(i);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -104,15 +109,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
-    }
-
-    public void addItem( TaskModel item) {
-        mItems.add(item);
-        notifyItemInserted(mItems.size());
+//        mItems.get(fromPosition).position = toPosition;
+//        int start = fromPosition;
+//        int finish = toPosition;
+//        if (fromPosition > toPosition) {
+//            start = toPosition;
+//            finish = fromPosition;
+//        }
+//        for (int i = start + 1; i < finish; i++) {
+//            mItems.get(i).position += 1;
+//        }
+//        updatePriorityForUser();
     }
 
     public void updateItems(List<TaskModel> newList) {
         mItems = newList;
+//        for (int i = 0; i < mItems.size(); i++) {
+//            mItems.get(i).position = i;
+//        }
         notifyDataSetChanged();
     }
 
@@ -120,6 +134,47 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mItems.clear();
         notifyDataSetChanged();
     }
+
+    public void sortItems() {
+        Collections.sort(mItems, new Comparator<TaskModel>() {
+            @Override
+            public int compare(TaskModel lhs, TaskModel rhs) {
+                // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                return lhs.position > rhs.position ? -1 : (lhs.position < rhs.position) ? 1 : 0;
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    public void writeBackPosition() {
+        if (!mItems.isEmpty()) {
+            for (TaskModel task : mItems) {
+                fb.child("usrs").child(uid).child("tasks").child(task.getKey()).child("position").setValue(task.position);
+            }
+        }
+    }
+
+    public void updatePriorityForUser() {
+        for (TaskModel task : mItems) {
+            fb.child("usrs").child(uid).child("tasks").child(task.getKey()).child("position").setValue(task.position);
+        }
+    }
+
+    public void printPriority() {
+        for (TaskModel task : mItems) {
+            Log.v("task", "task: " + task.getName() + ", position: " + task.getPosition());
+        }
+    }
+
+    public void updatePriorityForCalendar() {}
+
+//    public void updatePriorityForTeam() {
+//        for (TaskModel task : mItems) {
+//            task.getKey();
+//            fb.child("usrs")
+//        }
+//    }
+
 //
 //    static class MyItem {
 //        public final long id;
