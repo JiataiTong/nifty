@@ -40,12 +40,19 @@ import java.util.List;
 public class ListFragment extends Fragment {
 
     private String projectFireBaseID;
+    private RecyclerViewAdapter adapter;
 
     // Assumming calling from inside project
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         projectFireBaseID = getActivity().getIntent().getStringExtra("projectFireBaseID");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -69,7 +76,7 @@ public class ListFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         // Set Adapter
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter();
+        adapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
 
         // Set up FireBase
