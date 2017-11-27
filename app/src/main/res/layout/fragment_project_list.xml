@@ -8,24 +8,46 @@
     android:background="#2a63ADC7">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#63ADC7">
-        <LinearLayout
+        android:layout_height="?actionBarSize"
+        android:background="@color/dark_gray_darker">
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="end">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true">
             <ImageView
+                android:layout_marginLeft="4dp"
+                android:layout_gravity="left"
+                android:layout_width="80dp"
+                android:layout_height="?actionBarSize"
+                android:src="@drawable/nifty_grey"
+                android:layout_marginStart="4dp" />
+            <TextView
+                android:id="@+id/project_name"
+                style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textAlignment="center"
+                android:text="My Projects"
+
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:fontFamily="sans-serif"/>
+            <ImageView
+                android:layout_gravity="center_vertical|end"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
                 android:id="@+id/add_project"
-                android:paddingEnd="20dp"
-                android:paddingRight="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Add" />
+                android:contentDescription="Add"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp" />
             />
-        </LinearLayout>
-
-
+        </FrameLayout>
     </android.support.v7.widget.Toolbar>
 
     <it.gmariotti.cardslib.library.view.CardListView
@@ -35,7 +57,5 @@
         android:id="@+id/myList"
         xmlns:card="http://schemas.android.com/tools"
         card:list_card_layout_resourceID="@layout/example"/>
-    <include layout="@layout/list_card_undo_material_message" />
-
 
 </LinearLayout>

@@ -5,11 +5,11 @@
     android:layout_height="120dp">
 
     <!--<ImageView-->
-        <!--android:layout_marginTop="2dp"-->
-        <!--android:id="@+id/colorBorder"-->
-        <!--android:background="@drawable/today_rect_background"-->
-        <!--android:layout_width="15dp"-->
-        <!--android:layout_height="match_parent"/>-->
+    <!--android:layout_marginTop="2dp"-->
+    <!--android:id="@+id/colorBorder"-->
+    <!--android:background="@drawable/today_rect_background"-->
+    <!--android:layout_width="15dp"-->
+    <!--android:layout_height="match_parent"/>-->
     <TextView
         android:id="@+id/card_main_inner_simple_title"
         android:layout_gravity="center"

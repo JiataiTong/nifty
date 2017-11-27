@@ -146,14 +146,14 @@ public class ListFragment extends Fragment {
 
                                 // Add task to FireBase
                                 ref.setValue(task);
-                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                // fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
 
                                 // Get project ref
                                 DatabaseReference projectRef = fb.child("projects").child(projectFireBaseID);
 
                                 // Retrieve current project, add task to project, and update FireBase
                                 projectRef.child("tasks").child(taskKey).setValue(task);
-                                fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child(taskKey).setValue(true);
+                                // fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("tasks").child(taskKey).setValue(task);
 
                                 toDo.setText("");
                             }

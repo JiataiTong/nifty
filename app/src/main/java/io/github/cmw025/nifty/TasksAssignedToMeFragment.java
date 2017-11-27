@@ -7,24 +7,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ProjectInfoFragment extends Fragment {
-public int test;
 
-    public ProjectInfoFragment(){
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class TasksAssignedToMeFragment extends Fragment {
 
+
+    public TasksAssignedToMeFragment() {
+        // Required empty public constructor
     }
 
-    public void setTest(int test) {
-        this.test = test;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_project_info, container, false);
-
-        return rootView;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_tasks_assigned_to_me, container, false);
     }
-
 
 }

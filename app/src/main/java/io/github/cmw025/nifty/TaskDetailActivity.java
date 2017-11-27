@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -55,13 +57,21 @@ public class TaskDetailActivity extends AppCompatActivity {
     private String projectFireBaseID;
     private String uid;
 
+    private boolean taskFinished;
+
     private HashSet<MemberModel> currentMembers;
+
+    private RadioButton inProg;
+    private RadioButton finished;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
+        inProg = findViewById(R.id.inprog);
+        finished = findViewById(R.id.finished);
 
         taskName = (EditText) findViewById(R.id.fragment_note_title);
         taskContent = (EditText) findViewById(R.id.task_content);
@@ -95,6 +105,14 @@ public class TaskDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot data) {
                 TaskModel task = data.getValue(TaskModel.class);
+
+                if (task.getFinishDate() != null) {
+                    // Task is finished
+                    finished.setChecked(true);
+                }
+                else {
+                    inProg.setChecked(true);
+                }
 
                 projectFireBaseID = task.getProjectKey();
 
@@ -161,6 +179,8 @@ public class TaskDetailActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
 //    TextWatcher mTextWatcher = new TextWatcher() {
@@ -197,6 +217,16 @@ public class TaskDetailActivity extends AppCompatActivity {
 //            }
 //        }
 //    };
+
+    private boolean isFinished() {
+        if (inProg.isChecked()) {
+            taskFinished = false;
+        }
+        if (finished.isChecked()) {
+            taskFinished = true;
+        }
+        return taskFinished;
+    }
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -249,6 +279,17 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef2.child("name").setValue(taskName.getText().toString());
         taskRef2.child("content").setValue(taskContent.getText().toString());
         taskRef2.child("dueDate").setValue(date);
+
+
+        if (isFinished()) {
+            Date today = new Date();
+            taskRef.child("finishedDate").setValue(today);
+            taskRef2.child("finishedDate").setValue(today);
+        }
+        else {
+            taskRef.child("finishedDate").removeValue();
+            taskRef2.child("finishedDate").removeValue();
+        }
 
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);

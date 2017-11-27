@@ -6,16 +6,34 @@
     android:gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="io.github.cmw025.nifty.CalendarFragment">
-    <com.jaredrummler.materialspinner.MaterialSpinner
-        android:id="@+id/spinner"
+    <FrameLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:ms_background_color="#63ADC7"
-        app:ms_text_color="#FAFAFA"
-        android:textAlignment="center"
-        android:textSize="16dp"
-        android:fontFamily="sans-serif-thin"/>
+        android:layout_height="?actionBarSize"
+        android:background="@color/dark_gray_darker">
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:textStyle="bold"
+            app:ms_background_color="@color/dark_gray_darker"
+            app:ms_text_color="#FAFAFA"
+            android:text="Project List (Empty)"
+            android:textAlignment="center"
+            android:textSize="16dp"
+            android:fontFamily="sans-serif" />
+
+        <ImageView
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="left"
+            android:layout_width="80dp"
+            android:layout_height="?actionBarSize"
+            android:src="@drawable/nifty_grey"
+            android:layout_marginStart="20dp" />
+
+    </FrameLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,7 +73,7 @@
         android:gravity="top"
         android:orientation="vertical"
         android:background="#2a63ADC7">
-        <fragment android:name="io.github.cmw025.nifty.ListFragment"
+        <fragment android:name="io.github.cmw025.nifty.ListFragmentPersonal"
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

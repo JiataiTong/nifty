@@ -4,17 +4,24 @@ package io.github.cmw025.nifty;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -70,6 +77,8 @@ import me.nlmartian.silkcal.SimpleMonthAdapter;
 public class CalendarFragment extends Fragment implements OnDateSelectedListener {
 
     // private DayPickerView calendarView;
+    private String uid;
+    private DatabaseReference fb;
     private ArrayList<ProjectModel> projectList;
     private MaterialCalendarView calendarView;
     private TodayDecorator todayDecorator;
@@ -89,10 +98,12 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         super.onActivityCreated(savedState);
         Activity activity = getActivity();
         calendarView = (MaterialCalendarView) activity.findViewById(R.id.calendarView);
-        calendarView.setOnDateChangedListener(this);
+
         //calendarView.setTopbarVisible(false);
-        todayDecorator = new TodayDecorator();
-        calendarView.addDecorator(todayDecorator);
+
+        // Set up FireBase for project list
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        fb = FirebaseDatabase.getInstance().getReference();
 
         MaterialSpinner spinner = (MaterialSpinner) activity.findViewById(R.id.spinner);
         projectList = new ArrayList<>();
@@ -106,25 +117,81 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
+                // Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
                 ProjectModel project = (ProjectModel) item;
+                String projectKey = project.getKey();
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.MONTH, -2);
-                ArrayList<CalendarDay> dates = new ArrayList<>();
-                for (TaskModel task: project.giveMeTasks()) {
-                    Log.v("tasks", "this is task:" + task);
-                    CalendarDay day = CalendarDay.from(calendar);
-                    dates.add(day);
-                    calendar.add(Calendar.DATE, 5);
-                }
 
-                // Remove old decorators
-                calendarView.removeDecorators();
+                fb.child("projects").child(projectKey).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot data) {
 
-                // Add new decorators
-                calendarView.addDecorator(todayDecorator);
-                calendarView.addDecorator(new EventDecorator(Color.RED, dates));
+                        ArrayList<CalendarDay> dates = new ArrayList<>();
+                        ArrayList<TaskModel> tasks = new ArrayList<>();
+                        for (DataSnapshot child : data.getChildren()) {
+                            // Add to task list
+                            TaskModel task = child.getValue(TaskModel.class);
+                            tasks.add(task);
+
+                            // Add task due date to calendar
+                            Date dueDate = task.getDueDate();
+                            CalendarDay day = CalendarDay.from(dueDate);
+                            dates.add(day);
+                            // Snackbar.make(view, "Looped through task:  " + task, Snackbar.LENGTH_LONG).show();
+                            // Log.v("task", task.getName());
+                        }
+
+                        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+                            @Override
+                            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                                if (dates.contains(date)) {
+                                    // Snackbar.make(getView(), "Date  " + date, Snackbar.LENGTH_LONG).show();
+                                    ArrayList<TaskModel> tasksOnSelectedDay = new ArrayList<>();
+                                    for (TaskModel task: tasks) {
+                                        Date dueDate = task.getDueDate();
+                                        CalendarDay day = CalendarDay.from(dueDate);
+                                        if (day.equals(date)) {
+                                            tasksOnSelectedDay.add(task);
+                                            Snackbar.make(getView(), "Task  " + task, Snackbar.LENGTH_LONG).show();
+                                        }
+                                    }
+                                    // Get adapter to list fragment SOME MAGIC HERE
+                                    // RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
+                                    // Update list
+                                    // mAdapter.updateItems(tasksOnSelectedDay);
+                                }
+                            }
+                        });
+
+                        // Log.v("task", "Done with looping tasks.");
+
+                        // Remove old decorators
+                        calendarView.removeDecorators();
+
+                        // Add new decorators
+                        int projectColor = project.getColor();
+                        int realColor = ContextCompat.getColor(getContext(), projectColor);
+
+                        calendarView.setSelectionColor(realColor);
+                        todayDecorator = new TodayDecorator(realColor);
+                        calendarView.addDecorator(todayDecorator);
+
+                        EventDecorator eventDecorator = new EventDecorator(realColor, dates);
+                        calendarView.addDecorator(eventDecorator);
+
+                        // Project name
+                        String colorString = Integer.toString(realColor, 16);
+                        // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
+                        String text = "<font color=#ffffff>"+ project.getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                        spinner.setText(Html.fromHtml(text));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
             }
 //
 //            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
@@ -141,11 +208,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //            }
         });
 
-        // Set up FireBase for project list
-        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        fb.child("usrs").child(uid).child("projects").addValueEventListener(new ValueEventListener() {
+        fb.child("usrs").child(uid).child("projects").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
                 projectList = new ArrayList<>();
@@ -153,28 +216,39 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     ProjectModel project = child.getValue(ProjectModel.class);
                     String projectKey = project.getKey();
                     projectList.add(project);
-                    fb.child("usrs").child(uid).child("projects").child(projectKey).child("tasks").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot tasks) {
-                            List<TaskModel> newTaskList = new ArrayList<>();
-                            for (DataSnapshot task : tasks.getChildren()) {
-                                TaskModel mTask = task.getValue(TaskModel.class);
-                                newTaskList.add(mTask);
-                            }
-                            project.replaceTasks(newTaskList);
-                            projectList.add(project);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+//                    fb.child("usrs").child(uid).child("projects").child(projectKey).child("tasks").addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot tasks) {
+//                            List<TaskModel> newTaskList = new ArrayList<>();
+//                            for (DataSnapshot task : tasks.getChildren()) {
+//                                TaskModel mTask = task.getValue(TaskModel.class);
+//                                newTaskList.add(mTask);
+//                            }
+//                            // project.replaceTasks(newTaskList);
+//                            projectList.add(project);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
                 }
                 spinnerArrayAdapter.clear();
                 spinnerArrayAdapter.addAll(projectList);
+                // UI default to first project
                 if (!projectList.isEmpty()) {
-                    spinner.setText(projectList.get(0).getName());
+                    // Calendar decorator color
+                    int projectColor = projectList.get(0).getColor();
+                    int realColor = ContextCompat.getColor(getContext(), projectColor);
+                    todayDecorator = new TodayDecorator(realColor);
+                    calendarView.addDecorator(todayDecorator);
+
+                    // Project name
+                    String colorString = Integer.toString(realColor, 16);
+                    // Snackbar.make(getView(), colorString, Snackbar.LENGTH_LONG).show();
+                    String text = "<font color=#ffffff>"+ projectList.get(0).getName() + "</font> <font color=#" + colorString + ">   ⬤</font>";
+                    spinner.setText(Html.fromHtml(text));
                 }
             }
 
@@ -183,7 +257,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
             }
         });
-        new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
+        //new ApiSimulator().executeOnExecutor(Executors.newSingleThreadExecutor());
 //
 //        EditText editText = (EditText) activity.findViewById(R.id.add_task);
 //        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -223,9 +297,20 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         private final CalendarDay today;
         private final Drawable backgroundDrawable;
 
-        public TodayDecorator() {
+        public TodayDecorator(int color) {
+
             today = CalendarDay.today();
-            backgroundDrawable = getResources().getDrawable(R.drawable.today_circle_background);
+            Shape circle = new Shape() {
+                @Override
+                public void draw(Canvas canvas, Paint paint) {
+                    canvas.drawCircle(getWidth()/2,getHeight()/2,getHeight()/2,paint);
+                }
+            };
+            ShapeDrawable shapeDrawable = new ShapeDrawable();
+            shapeDrawable.setShape(circle);
+            shapeDrawable.getPaint().setColor(color);
+
+            backgroundDrawable = shapeDrawable;
         }
 
         @Override
@@ -243,12 +328,23 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         private int color;
         private HashSet<CalendarDay> dates;
-        private final Drawable backgroundDrawable;
+        private final ShapeDrawable backgroundDrawable;
 
         public EventDecorator(int color, Collection<CalendarDay> dates) {
             this.color = color;
             this.dates = new HashSet<>(dates);
-            backgroundDrawable = getResources().getDrawable(R.drawable.today_rect_background);
+
+            Shape circle = new Shape() {
+                @Override
+                public void draw(Canvas canvas, Paint paint) {
+                    canvas.drawCircle(getWidth()/2,getHeight()/2,getHeight()/2,paint);
+                }
+            };
+            ShapeDrawable shapeDrawable = new ShapeDrawable();
+            shapeDrawable.setShape(circle);
+            shapeDrawable.getPaint().setColor(color);
+
+            backgroundDrawable = shapeDrawable;
         }
 
         @Override
@@ -259,7 +355,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         @Override
         public void decorate(DayViewFacade view) {
             view.setBackgroundDrawable(backgroundDrawable);
-            //view.addSpan(new DotSpan(5, color));
+            //view.addSpan(new DotSpan(20, color));
+            //view.setBackgroundDrawable(color);
         }
     }
 

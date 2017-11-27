@@ -26,6 +26,7 @@ public class TaskModel implements Comparable<TaskModel> {
     private String name;
     private Date finishDate;
 
+
     public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key, String projectKey){
         this.name = name;
         this.content = content;

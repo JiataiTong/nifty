@@ -15,8 +15,8 @@ public class MyAdapter extends FragmentStatePagerAdapter {
     
 
     @Override
-    public ProjectInfoFragment getItem(int i){
-        return new ProjectInfoFragment();
+    public ProjectContributionFragment getItem(int i){
+        return new ProjectContributionFragment();
     }
 
     public int getCount(){

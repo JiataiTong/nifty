@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="io.github.cmw025.nifty.TasksAssignedToMeFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="#63ADC7"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/dark_gray_darker">
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="left"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/nifty_grey"
+                android:layout_marginStart="20dp" />
+            <TextView
+                android:id="@+id/project_name"
+                style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textAlignment="center"
+                android:text="My Tasks"
+                android:paddingRight="26dp"
+                android:paddingEnd="26dp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginRight="80dp"
+                android:layout_marginEnd="80dp"
+                android:fontFamily="sans-serif"/>
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:background="#2a63ADC7">
+        <fragment android:name="io.github.cmw025.nifty.ListFragmentPersonal"
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+</LinearLayout>

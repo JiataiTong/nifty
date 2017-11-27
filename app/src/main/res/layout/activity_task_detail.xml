@@ -92,7 +92,7 @@
 
     <RadioGroup
         android:layout_margin="@dimen/activity_horizontal_margin"
-        android:id="@+id/radioGroup"
+        android:id="@+id/finished_or_not"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">

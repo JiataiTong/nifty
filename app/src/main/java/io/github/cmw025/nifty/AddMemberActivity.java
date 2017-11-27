@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import io.github.cmw025.nifty.RecyclerViewCheckboxAdapter.MemberModel;
 
@@ -32,6 +33,7 @@ public class AddMemberActivity extends AppCompatActivity {
     private String projectFireBaseID;
     private String taskFireBaseKey;
     private HashSet<MemberModel> currentMembers;
+    private DatabaseReference fb;
     private DatabaseReference projectRef;
     private DatabaseReference taskRef;
     private DatabaseReference taskRef2;
@@ -50,7 +52,7 @@ public class AddMemberActivity extends AppCompatActivity {
         currentMembers = (HashSet<MemberModel>) getIntent().getSerializableExtra("currentMembers");
 
         // Set up FireBase
-        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+        fb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         projectRef = fb.child("projects").child(projectFireBaseID);
         taskRef = fb.child("tasks").child(taskFireBaseKey);
@@ -121,6 +123,23 @@ public class AddMemberActivity extends AppCompatActivity {
             taskRef.child("members").removeValue();
             taskRef2.child("members").setValue(new ArrayList(currentMembers));
         }
+
+        for (MemberModel member : currentMembers) {
+            String uid = member.getUid();
+            taskRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot data) {
+                    TaskModel task = data.getValue(TaskModel.class);
+                    fb.child("usrs").child(uid).child("tasks").child(taskFireBaseKey).setValue(task);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);
     }
