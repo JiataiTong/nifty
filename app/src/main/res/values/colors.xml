@@ -66,4 +66,16 @@
     <color name="dark_gray_lighter">#656d78</color>
     <color name="dark_gray_darker">#434a54</color>
 
+
+    <color name="pastel_red">#ffb3ba</color>
+    <color name="pastel_pink">#ffd1dc</color>
+    <color name="pastel_orange">#ffdfba</color>
+    <color name="pastel_yellow">#ffffba</color>
+    <color name="pastel_green">#baffc9</color>
+    <color name="pastel_blue">#bae1ff</color>
+    <color name="pastel_purple">#b19cd9</color>
+    <color name="pastel_cyan">#7BCDC9</color>
+    <color name="pastel_aqua">#BCF9F1</color>
+
+
 </resources>

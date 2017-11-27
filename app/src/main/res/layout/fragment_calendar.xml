@@ -6,35 +6,38 @@
     android:gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="io.github.cmw025.nifty.CalendarFragment">
-    <com.jaredrummler.materialspinner.MaterialSpinner
-        android:id="@+id/spinner"
+    <FrameLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:ms_background_color="#63ADC7"
-        app:ms_text_color="#FAFAFA"
-        android:textAlignment="center"
-        android:textSize="16dp"
-        android:fontFamily="sans-serif-thin"/>
+        android:layout_height="?actionBarSize"
+        android:background="@color/dark_gray_darker">
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:textStyle="bold"
+            app:ms_background_color="@color/dark_gray_darker"
+            app:ms_text_color="#FAFAFA"
+            android:text="Project List (Empty)"
+            android:textAlignment="center"
+            android:textSize="16dp"
+            android:fontFamily="sans-serif" />
+
+        <ImageView
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="left"
+            android:layout_width="80dp"
+            android:layout_height="?actionBarSize"
+            android:src="@drawable/nifty_grey"
+            android:layout_marginStart="20dp" />
+
+    </FrameLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.6">
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_margin="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="hola!"
-            android:textSize="16sp"
-            android:gravity="bottom|center"
-            android:layout_marginTop="30dp"
-            android:paddingTop="30sp"
-            android:textColor="#63ADC7"
-            />
+        android:layout_weight="0.7">
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
@@ -55,10 +58,44 @@
         android:gravity="top"
         android:orientation="vertical"
         android:background="#2a63ADC7">
-        <fragment android:name="io.github.cmw025.nifty.ListFragment"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:weight="http://schemas.android.com/tools"
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:background="#2a63ADC7"
+            android:orientation="vertical"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
+            <EditText
+                android:imeOptions="actionDone"
+                android:id="@+id/add_todo_calendar"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:inputType="text"
+                android:layout_height="@dimen/list_item_height"
+                android:hint="Add a to-do..."
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
+                android:drawableLeft="@drawable/ic_add_white_24dp"
+                android:drawablePadding="10dp"
+                android:background="#aad3adc7"/>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:padding="10dp"
+                style="@style/myRecyclerViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
 
     </FrameLayout>
 

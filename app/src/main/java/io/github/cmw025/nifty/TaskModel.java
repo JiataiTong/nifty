@@ -26,6 +26,8 @@ public class TaskModel implements Comparable<TaskModel> {
     private String name;
     private Date finishDate;
 
+    public int position;
+
     public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key, String projectKey){
         this.name = name;
         this.content = content;
@@ -139,6 +141,14 @@ public class TaskModel implements Comparable<TaskModel> {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int pos) {
+        this.position = pos;
     }
 
 }

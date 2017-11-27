@@ -1,0 +1,388 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dis_shit"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:weightSum="10">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="#63ADC7">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            android:showDividers="end">
+            <ImageView
+                android:layout_gravity="left"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_close_white_24dp"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:onClick="goBack"/>
+            <TextView
+                android:id="@+id/project_name"
+                style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textAlignment="center"
+                android:text="Project Settings"
+                android:paddingRight="26dp"
+                android:paddingEnd="26dp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+            <ImageView
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_check_white_24dp"
+                android:paddingEnd="16dp"
+                android:paddingRight="16dp"
+                android:onClick="saveSettings"/>
+
+        </FrameLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:paddingLeft="23dp"
+        android:paddingStart="23dp"
+        android:paddingRight="40dp"
+        android:paddingEnd="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name "
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/edit_project_name"
+            android:hint="Add Project Name..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="23dp"
+        android:paddingStart="23dp"
+        android:paddingRight="23dp"
+        android:paddingEnd="23dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color "
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <RadioGroup
+            android:id="@+id/color_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/red"
+                android:buttonTint="@color/light_red" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orange"
+                android:buttonTint="@color/light_orange"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/yellow"
+                android:buttonTint="@color/light_yellow"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/green"
+                android:buttonTint="@color/light_green"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cyan"
+                android:buttonTint="@color/light_cyan"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/aqua"
+                android:buttonTint="@color/light_aqua"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/blue"
+                android:buttonTint="@color/light_blue"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/purple"
+                android:buttonTint="@color/light_purple"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="11"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:onClick="inviteMembers"
+            android:layout_weight="5.8"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:paddingLeft="23dp"
+            android:paddingStart="23dp"
+            android:paddingRight="23dp"
+            android:paddingEnd="23dp">
+            <TextView
+                android:paddingTop="6dp"
+                android:id="@+id/member_list"
+                android:textSize="15sp"
+                android:layout_gravity="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_person_add_black_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Members "
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_gravity="right|bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_aqua"
+                android:text="Invite New Member..."/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_weight="5.5"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:paddingLeft="23dp"
+            android:paddingStart="23dp"
+            android:paddingRight="23dp"
+            android:paddingEnd="23dp">
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_date_range_black_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:textColor="@color/medium_gray_darker"
+                android:layout_marginTop="13dp"
+                android:layout_marginLeft="85dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:text="START"/>
+
+            <TextView
+                android:textColor="@color/medium_gray_darker"
+                android:layout_marginTop="13dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="right"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="DUE"/>
+
+            <Button
+                android:id="@+id/start_date"
+                android:textColor="@color/dark_gray_lighter"
+                android:text="08/01/13"
+                android:background="@color/light_gray_darker"
+                android:drawableRight="@drawable/calendar"
+                android:layout_gravity="bottom"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/calendar" />
+
+            <Button
+                android:id="@+id/due_date"
+                android:textColor="@color/dark_gray_lighter"
+                android:text="08/29/13"
+                android:drawableRight="@drawable/calendar"
+                android:background="@color/light_gray_darker"
+                android:layout_marginEnd="20dp"
+                android:layout_gravity="bottom|right"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:drawableEnd="@drawable/calendar" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_weight="3"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:paddingLeft="23dp"
+            android:paddingStart="23dp"
+            android:paddingRight="23dp"
+            android:paddingEnd="23dp">
+
+            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_notifications_black_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notifications "
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+            <Switch
+                android:id="@+id/parent_switch"
+                android:checked="true"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_marginTop="40dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notify Milestones"
+                        android:textSize="16sp"/>
+                    <Switch
+                        android:id="@+id/notify_milestones"
+                        android:checked="true"
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notify My Tasks"
+                        android:textSize="16sp"/>
+                    <Switch
+                        android:id="@+id/notify_my_tasks"
+                        android:checked="true"
+                        android:layout_gravity="right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notify All Tasks"
+                        android:textSize="16sp"/>
+                    <Switch
+                        android:id="@+id/notify_all_tasks"
+                        android:checked="true"
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp" />
+                </FrameLayout>
+
+
+
+
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal">
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="2"
+                        android:progress="3" />
+                    <FrameLayout
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+                        <TextView android:text="Monthly"
+                            android:layout_marginLeft="10dp"
+                            android:layout_gravity="start"
+                            android:id="@+id/monthly"
+                            android:textSize="15sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView android:text="Weekly"
+                            android:layout_gravity="center"
+                            android:id="@+id/weekly"
+                            android:textSize="15sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                        <TextView android:text="Daily"
+                            android:layout_marginRight="10dp"
+                            android:layout_gravity="end"
+                            android:id="@+id/daily"
+                            android:textSize="15sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
