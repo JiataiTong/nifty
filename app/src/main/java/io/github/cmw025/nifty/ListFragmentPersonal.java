@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -144,6 +145,17 @@ public class ListFragmentPersonal extends Fragment {
         dragMgr.attachRecyclerView(recyclerView);
 
         return v;
+    }
+
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        ImageView signOutBtn = getActivity().findViewById(R.id.sign_out_list);
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), PersonalInfoActivity.class));
+            }
+        });
     }
 
     // Helper function to create RecyclerView ID from task FireBase ID

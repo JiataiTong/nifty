@@ -21,6 +21,8 @@
             android:orientation="horizontal"
             android:background="@color/dark_gray_darker">
             <ImageView
+                android:id="@+id/sign_out_list"
+                android:clickable="true"
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="left"
                 android:layout_width="80dp"

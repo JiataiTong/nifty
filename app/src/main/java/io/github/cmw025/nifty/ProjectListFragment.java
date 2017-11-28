@@ -332,14 +332,8 @@ public class ProjectListFragment extends Fragment {
 
                         // For now we pretend we are in every new project we create
                         MemberModel member = new MemberModel(userDisplayName, true, uid);
-                        MemberModel member2 = new MemberModel("sonia", false, "SONIA'S UNIQUE ID");
-                        MemberModel member3 = new MemberModel("Troy", false, "TROY'S UNIQUE ID");
-                        MemberModel member4 = new MemberModel("Weiwei", false, "WEIWEI VERY SPECIAL");
 
                         ref.child("members").child(member.getUid()).setValue(member);
-                        ref.child("members").child(member2.getUid()).setValue(member2);
-                        ref.child("members").child(member3.getUid()).setValue(member3);
-                        ref.child("members").child(member4.getUid()).setValue(member4);
 
                         // Save user project history
                         fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
@@ -347,9 +341,6 @@ public class ProjectListFragment extends Fragment {
                         // Save project
                         fb.child("usrs").child(uid).child("projects").child(key).setValue(project);
                         fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member.getUid()).setValue(member);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member2.getUid()).setValue(member2);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member3.getUid()).setValue(member3);
-                        fb.child("usrs").child(uid).child("projects").child(key).child("members").child(member4.getUid()).setValue(member4);
                     }
                 });
 //                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

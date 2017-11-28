@@ -25,6 +25,8 @@
             android:fontFamily="sans-serif" />
 
         <ImageView
+            android:id="@+id/sign_out_calendar"
+            android:clickable="true"
             android:layout_marginLeft="20dp"
             android:layout_gravity="left"
             android:layout_width="80dp"

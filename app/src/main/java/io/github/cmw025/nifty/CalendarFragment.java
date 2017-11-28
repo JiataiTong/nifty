@@ -4,6 +4,7 @@ package io.github.cmw025.nifty;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,6 +37,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableRow;
@@ -150,6 +152,14 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         initFireBase();
         initSpinner();
         initEditText();
+
+        ImageView signOutBtn = getActivity().findViewById(R.id.sign_out_calendar);
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), PersonalInfoActivity.class));
+            }
+        });
     }
 
     public void initFireBase() {
