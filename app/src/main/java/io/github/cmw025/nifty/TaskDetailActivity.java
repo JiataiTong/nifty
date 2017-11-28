@@ -135,23 +135,24 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         taskRef = fb.child("tasks").child(taskFireBaseKey);
 
-//        taskRef.child("finishedDate").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot data) {
-//                if (data.getValue() != null) {
-//                    // Task is finished
-//                    finished.setChecked(true);
-//                }
-//                else {
-//                    inProg.setChecked(true);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+
+        taskRef.child("finishedDate").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    // Task is finished
+                    finished.setChecked(true);
+                }
+                else {
+                    inProg.setChecked(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         taskRef.addValueEventListener(new ValueEventListener() {
@@ -159,6 +160,7 @@ public class TaskDetailActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot data) {
 
                 task = data.getValue(TaskModel.class);
+
                 if (task.getFinishDate() != null) {
                     // Task is finished
                     finished.setChecked(true);
@@ -166,6 +168,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                 else {
                     inProg.setChecked(true);
                 }
+
 
                 projectFireBaseID = task.getProjectKey();
 
@@ -311,6 +314,23 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef2.setValue(task);
         taskRef2.child("members").setValue(new ArrayList(currentMembers));
 
+        if (isFinished()) {
+            Date today = new Date();
+            Date newDate = new Date(today.getTime() + (604800000L *2 ) + (24 *60 *60));
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            stringdate = dt.format(newDate);
+
+            taskRef.child("finishedDate").setValue(today);
+            taskRef2.child("finishedDate").setValue(today);
+            taskRef.child("finished").setValue(true);
+            taskRef2.child("finished").setValue(true);
+        }
+        else {
+            taskRef.child("finishedDate").removeValue();
+            taskRef2.child("finishedDate").removeValue();
+            taskRef.child("finished").setValue(false);
+            taskRef2.child("finished").setValue(false);
+        }
         fb.child("usrs").child(uid).child("tasks").child(taskFireBaseKey).child("name").setValue(taskName.getText().toString());
 
         finish();
