@@ -2,6 +2,7 @@ package io.github.cmw025.nifty;
 
 import com.google.android.gms.tasks.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,7 @@ public class TaskModel implements Comparable<TaskModel> {
         return this.name;
     }
 
+
     public Date getFinishDate(){
         if (this.isFinished()){
             return this.finishDate;
@@ -109,6 +111,7 @@ public class TaskModel implements Comparable<TaskModel> {
     public void setName(String name) {
         this.name = name;
     }
+
     public void setFinishDate(Date date){ this.finishDate = date;}
 
     public void removeFinishDate(){this.finishDate = null;}
@@ -136,10 +139,17 @@ public class TaskModel implements Comparable<TaskModel> {
         return 0;
     }
 
+    public void setfinish(boolean fin){
+        this.finished = fin;
+    }
+
+
+
     public void finish(){
         this.finishDate = new Date();
-        this.finished = true;
+        this.setfinish(true);
     }
+
 
     @Override
     public String toString() {

@@ -60,7 +60,6 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -72,10 +71,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
-
-import me.nlmartian.silkcal.DatePickerController;
-import me.nlmartian.silkcal.DayPickerView;
-import me.nlmartian.silkcal.SimpleMonthAdapter;
 
 
 public class CalendarFragment extends Fragment implements OnDateSelectedListener, MaterialSpinner.OnItemSelectedListener{

@@ -45,7 +45,9 @@ public class ProjectContributionFragment extends Fragment {
     private ArrayList<Integer> countdate;
     private ArrayList<String> lista;
     private ValueLineChart linech;
-    private ArrayList<Integer> check;
+
+    private ArrayList<Date> finishedDates;
+    private ArrayList<Date> check;
 
     public ProjectContributionFragment(){
 
@@ -69,19 +71,21 @@ public class ProjectContributionFragment extends Fragment {
 
         linech = (ValueLineChart) activity.findViewById(R.id.linechart);
         check = new ArrayList<>();
+        finishedDates = new ArrayList<>();
 
         fb = FirebaseDatabase.getInstance().getReference();
         fb.child("projects").child(projectFireBaseID).child("tasks").addValueEventListener(new ValueEventListener() {
+
             @Override
+
             public void onDataChange(DataSnapshot data) {
-                ArrayList<Date> finishedDates = new ArrayList<>();
-                for (DataSnapshot child : data.getChildren()) {
-                    TaskModel task = child.getValue(TaskModel.class);
-                    finishedDates.add(task.getFinishDate());
-                    if (task.getFinishDate() != null) {
+                for (DataSnapshot data1 : data.getChildren()) {
+                    TaskModel task = data1.getValue(TaskModel.class);
+                    Date date = new Date();
+                    check.add(date);
+                    if (task.isFinished()) {
                         finishedDates.add(task.getFinishDate());
                     }
-
                 }
 
                 ArrayList<String> finishDatetoStr = new ArrayList<>();
@@ -114,6 +118,9 @@ public class ProjectContributionFragment extends Fragment {
                     }
                 });
                 contrib1 = finishDatetoStr;
+
+                countDate();
+                setData();
             }
 
             @Override
@@ -122,8 +129,7 @@ public class ProjectContributionFragment extends Fragment {
             }
         });
 
-        countDate();
-        setData();
+
 //        DatabaseReference usrRef = (DatabaseReference) fb.child("usrs").addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
@@ -183,18 +189,18 @@ public class ProjectContributionFragment extends Fragment {
 
         ValueLineSeries series = new ValueLineSeries();
         series.setColor(0xFF56B7F1);
-        series.addPoint(new ValueLinePoint("start",0));
+        series.addPoint(new ValueLinePoint("start",0f));
 
-        for (int i =0 ; i < countdate.size(); i++){
+        for (int i = 0 ; i < countdate.size(); i++){
             series.addPoint(new ValueLinePoint(lista.get(i),countdate.get(i)));
         }
-
 
         linech.addSeries(series);
         linech.addStandardValue(1.0f);
         linech.addStandardValue(2.0f);
         linech.addStandardValue(3.0f);
         linech.setOnPointFocusedListener(new IOnPointFocusedListener() {
+
             @Override
             public void onPointFocused(int _PointPos) {
                 Log.d("Test", "Pos: " + _PointPos);
