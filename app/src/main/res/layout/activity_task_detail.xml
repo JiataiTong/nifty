@@ -8,10 +8,10 @@
     android:gravity="top">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/task_detail_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="#63ADC7"
+        android:background="@color/dark_gray_darker"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -92,7 +92,7 @@
 
     <RadioGroup
         android:layout_margin="@dimen/activity_horizontal_margin"
-        android:id="@+id/finished_or_not"
+        android:id="@+id/radioGroup"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">

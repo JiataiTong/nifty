@@ -94,30 +94,6 @@ public class ListFragmentPersonal extends Fragment {
 
             }
         });
-//        Query query = fb.child("usrs").child(uid).child("tasks");
-//        Query query = FirebaseDatabase.getInstance()
-//                .getReference()
-//                .child("chats")
-//                .limitToLast(50);
-
-//        myAdapter adapter = new myAdapter<TaskHolder, Task>(query) {
-//
-//            @Override
-//            public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                //setHasStableIds(true);
-//                Context context = parent.getContext();
-//                View v = LayoutInflater.from(context).inflate(R.layout.list_item_minimal, parent, false);
-//                return new TaskHolder(v);
-//            }
-//
-//            @Override
-//            public void onBindViewHolder(TaskHolder holder, int position) {
-//
-//            }
-//
-//        };
-//        recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
-
 
         // Set add item listener
         // Set up EditText add-task listener
@@ -181,34 +157,4 @@ public class ListFragmentPersonal extends Fragment {
         }
         return h;
     }
-
-//
-//    private static class Task {
-//        private String title;
-//        public Task () {}
-//
-//        public void setTitle(String title) {
-//            this.title = title;
-//        }
-//
-//        public String getTitle() {
-//            return this.title;
-//        }
-//    }
-//
-//    private class TaskHolder extends RecyclerView.ViewHolder {
-//
-//        public TaskHolder(View itemView) {
-//            super(itemView);
-//        }
-//    }
-//
-//    private abstract class myAdapter<ViewHolder extends RecyclerView.ViewHolder, T> extends FirebaseRecyclerAdapter<ViewHolder, T> {
-//        public myAdapter(Query query) {
-//            super(query);
-//            setHasStableIds(true);
-//        }
-//
-//    }
-
 }

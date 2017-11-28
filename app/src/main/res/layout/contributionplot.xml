@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.github.mikephil.charting.charts.LineChart
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Group Contribution"
+        android:textColor="#ff2f8b2a"
+        android:textSize="@dimen/actions_padding"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textStyle="italic"
+        />
+
+    <org.eazegraph.lib.charts.ValueLineChart
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        app:egUseCubic="true"
+        app:egUseOverlapFill="true"
+        app:egCurveSmoothness="0.25"
+        app:egIndicatorLineColor="#FE6DA8"
+        app:egIndicatorTextColor="#FE6DA8"
+        app:egLegendHeight="40dp"
+        app:egShowStandardValue="true"
+        app:egIndicatorTextUnit="g"
+        app:egShowLegendBeneathIndicator="true"
         android:id="@+id/linechart">
 
+    </org.eazegraph.lib.charts.ValueLineChart>
 
-    </com.github.mikephil.charting.charts.LineChart>
 
 </LinearLayout>

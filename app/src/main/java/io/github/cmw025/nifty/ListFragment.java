@@ -40,12 +40,19 @@ import java.util.List;
 public class ListFragment extends Fragment {
 
     private String projectFireBaseID;
+    private RecyclerViewAdapter adapter;
 
     // Assumming calling from inside project
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         projectFireBaseID = getActivity().getIntent().getStringExtra("projectFireBaseID");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -69,7 +76,7 @@ public class ListFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         // Set Adapter
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter();
+        adapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
 
         // Set up FireBase
@@ -77,6 +84,7 @@ public class ListFragment extends Fragment {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         String uid = user.getUid();
+        String userDisplayName = user.getDisplayName();
 
         DatabaseReference tasksRef = fb.child("projects").child(projectFireBaseID).child("tasks");
         tasksRef.addValueEventListener(new ValueEventListener() {
@@ -96,30 +104,6 @@ public class ListFragment extends Fragment {
 
             }
         });
-//        Query query = fb.child("usrs").child(uid).child("tasks");
-//        Query query = FirebaseDatabase.getInstance()
-//                .getReference()
-//                .child("chats")
-//                .limitToLast(50);
-
-//        myAdapter adapter = new myAdapter<TaskHolder, Task>(query) {
-//
-//            @Override
-//            public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                //setHasStableIds(true);
-//                Context context = parent.getContext();
-//                View v = LayoutInflater.from(context).inflate(R.layout.list_item_minimal, parent, false);
-//                return new TaskHolder(v);
-//            }
-//
-//            @Override
-//            public void onBindViewHolder(TaskHolder holder, int position) {
-//
-//            }
-//
-//        };
-//        recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
-
 
         // Set add item listener
         // Set up EditText add-task listener
@@ -153,6 +137,13 @@ public class ListFragment extends Fragment {
 
                                 // Retrieve current project, add task to project, and update FireBase
                                 projectRef.child("tasks").child(taskKey).setValue(task);
+
+                                // Add user to the task member list
+                                RecyclerViewCheckboxAdapter.MemberModel user = new RecyclerViewCheckboxAdapter.MemberModel(userDisplayName, true, uid);
+                                projectRef.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("tasks").child(taskKey).child("members").child(uid).setValue(user);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).setValue(task);
+                                fb.child("usrs").child(uid).child("tasks").child(taskKey).child("members").child(uid).setValue(user);
                                 // fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("tasks").child(taskKey).setValue(task);
 
                                 toDo.setText("");
@@ -183,34 +174,4 @@ public class ListFragment extends Fragment {
         }
         return h;
     }
-
-//
-//    private static class Task {
-//        private String title;
-//        public Task () {}
-//
-//        public void setTitle(String title) {
-//            this.title = title;
-//        }
-//
-//        public String getTitle() {
-//            return this.title;
-//        }
-//    }
-//
-//    private class TaskHolder extends RecyclerView.ViewHolder {
-//
-//        public TaskHolder(View itemView) {
-//            super(itemView);
-//        }
-//    }
-//
-//    private abstract class myAdapter<ViewHolder extends RecyclerView.ViewHolder, T> extends FirebaseRecyclerAdapter<ViewHolder, T> {
-//        public myAdapter(Query query) {
-//            super(query);
-//            setHasStableIds(true);
-//        }
-//
-//    }
-
 }

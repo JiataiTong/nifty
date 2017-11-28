@@ -2,7 +2,9 @@ package io.github.cmw025.nifty;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
@@ -22,6 +24,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,14 +59,19 @@ public class TaskDetailActivity extends AppCompatActivity {
     private DatabaseReference fb;
     private DatabaseReference taskRef;
     private String projectFireBaseID;
+    private String projectFireBaseKey;
     private String uid;
 
     private boolean taskFinished;
+    private int realColor;
 
     private HashSet<MemberModel> currentMembers;
 
     private RadioButton inProg;
     private RadioButton finished;
+    private String stringdate;
+
+    private TaskModel task;
 
 
     @Override
@@ -99,13 +108,57 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         fb = FirebaseDatabase.getInstance().getReference();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Set ToolBar color
+        Toolbar toolbar = findViewById(R.id.task_detail_toolbar);
+        projectFireBaseKey = intent.getStringExtra("projectFireBaseKey");
+        fb.child("usrs").child(uid).child("projects").child(projectFireBaseKey).child("color").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    long l = (long) data.getValue();
+                    int projectColor = (int) l;
+                    realColor = ContextCompat.getColor(TaskDetailActivity.this, projectColor);
+                    toolbar.setBackgroundColor(realColor);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
         taskRef = fb.child("tasks").child(taskFireBaseKey);
+
+//        taskRef.child("finishedDate").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot data) {
+//                if (data.getValue() != null) {
+//                    // Task is finished
+//                    finished.setChecked(true);
+//                }
+//                else {
+//                    inProg.setChecked(true);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
 
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                TaskModel task = data.getValue(TaskModel.class);
 
+                task = data.getValue(TaskModel.class);
                 if (task.getFinishDate() != null) {
                     // Task is finished
                     finished.setChecked(true);
@@ -183,41 +236,6 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     }
 
-//    TextWatcher mTextWatcher = new TextWatcher() {
-//        private CharSequence temp;
-//        private int editStart;
-//        private int editEnd;
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            // TODO Auto-generated method stub
-//            temp = s;
-//        }
-//
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count,
-//                                      int after) {
-//            // TODO Auto-generated method stub
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//            // TODO Auto-generated method stub
-//            editStart = taskContent.getSelectionStart();
-//            editEnd = taskContent.getSelectionEnd();
-//            mTextView.setText(temp.length() + " letters input");
-//            if (temp.length() > 2000) {
-//                Toast.makeText(TaskDetailActivity.this,
-//                        "the note is too long!", Toast.LENGTH_SHORT)
-//                        .show();
-//                s.delete(editStart - 1, editEnd);
-//                int tempSelection = editStart;
-//                taskContent.setText(s);
-//                taskContent.setSelection(tempSelection);
-//            }
-//        }
-//    };
-
     private boolean isFinished() {
         if (inProg.isChecked()) {
             taskFinished = false;
@@ -237,7 +255,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     public void display() {
-        dueButton.setText(new StringBuffer().append(mMonth + 1).append("-").append(mDay).append("-").append(mYear).append(" "));
+        dueButton.setText(new StringBuffer().append(mMonth + 1).append("/").append(mDay).append("/").append(mYear).append(" "));
     }
 
     private DatePickerDialog.OnDateSetListener mdateListener = new DatePickerDialog.OnDateSetListener() {
@@ -257,6 +275,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         intent.putExtra("projectFireBaseID", projectFireBaseID);
         intent.putExtra("taskFireBaseKey", taskFireBaseKey);
         intent.putExtra("currentMembers", currentMembers);
+        intent.putExtra("color", realColor);
         startActivity(intent);
         overridePendingTransition(R.animator.slide_in_right_to_left, R.animator.slide_out_right_to_left);
     }
@@ -271,25 +290,28 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void goBack(View view) {
         // Update changed to FireBase
         Date date = new Date(mYear - 1900, mMonth, mDay);
+        if (isFinished()) {
+            task.finish();
+            task.setFinishDate(date);
+        }
+        else {
+            task.removeFinishDate();
+        }
+
         taskRef.child("name").setValue(taskName.getText().toString());
         taskRef.child("content").setValue(taskContent.getText().toString());
         taskRef.child("dueDate").setValue(date);
+        taskRef.setValue(task);
+        taskRef.child("members").setValue(new ArrayList(currentMembers));
 
         DatabaseReference taskRef2 = fb.child("projects").child(projectFireBaseID).child("tasks").child(taskFireBaseKey);
         taskRef2.child("name").setValue(taskName.getText().toString());
         taskRef2.child("content").setValue(taskContent.getText().toString());
         taskRef2.child("dueDate").setValue(date);
+        taskRef2.setValue(task);
+        taskRef2.child("members").setValue(new ArrayList(currentMembers));
 
-
-        if (isFinished()) {
-            Date today = new Date();
-            taskRef.child("finishedDate").setValue(today);
-            taskRef2.child("finishedDate").setValue(today);
-        }
-        else {
-            taskRef.child("finishedDate").removeValue();
-            taskRef2.child("finishedDate").removeValue();
-        }
+        fb.child("usrs").child(uid).child("tasks").child(taskFireBaseKey).child("name").setValue(taskName.getText().toString());
 
         finish();
         overridePendingTransition(R.animator.slide_in_left_to_right, R.animator.slide_out_left_to_right);

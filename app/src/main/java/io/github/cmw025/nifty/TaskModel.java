@@ -26,6 +26,7 @@ public class TaskModel implements Comparable<TaskModel> {
     private String name;
     private Date finishDate;
 
+    public int position;
 
     public TaskModel(String name, String content, Date startDate, Date dueDate, long id, String key, String projectKey){
         this.name = name;
@@ -108,6 +109,9 @@ public class TaskModel implements Comparable<TaskModel> {
     public void setName(String name) {
         this.name = name;
     }
+    public void setFinishDate(Date date){ this.finishDate = date;}
+
+    public void removeFinishDate(){this.finishDate = null;}
 
     @Override
     public boolean equals(Object o) {
@@ -140,6 +144,14 @@ public class TaskModel implements Comparable<TaskModel> {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int pos) {
+        this.position = pos;
     }
 
 }

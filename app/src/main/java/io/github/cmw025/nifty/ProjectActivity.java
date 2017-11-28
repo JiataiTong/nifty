@@ -9,11 +9,13 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,17 +70,20 @@ public class ProjectActivity extends FragmentActivity {
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         // FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fb.child("usrs").child(uid).child("projects").child(projectFireBaseID).child("color").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                long l = (long) data.getValue();
-                int projectColor = (int) l;
-                realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
-                toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
-                // Set ToolBar color
+                if (data.getValue() != null) {
+                    // Set ToolBar color
+                    long l = (long) data.getValue();
+                    int projectColor = (int) l;
+                    realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
+                    toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
+                }
             }
 
             @Override
@@ -125,7 +130,7 @@ public class ProjectActivity extends FragmentActivity {
                     fragment = new CalendarFragment();
                     break;
                 case 3:
-                    fragment = new ProjectContributionFragment();
+                    fragment = new ProjectInfoFragment();
                     break;
             }
             return fragment;
