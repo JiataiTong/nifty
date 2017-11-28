@@ -28,8 +28,8 @@ public class ProjectInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_project_info,container,false);
-        Intent intent=new Intent(getActivity(),ChattingActivity.class);
-        startChatting = (ImageButton) getActivity().findViewById(R.id.startChatting);
+        Intent intent = new Intent(getActivity(), ChattingActivity.class);
+        startChatting = (ImageButton) v.findViewById(R.id.startChatting);
         startChatting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View a){

@@ -67,7 +67,18 @@
             android:layout_gravity="bottom"
             android:id="@+id/indicator"
             android:layout_width="match_parent"
-            android:layout_height="48dp" />
+            android:layout_height="48dp" >
+        </me.relex.circleindicator.CircleIndicator>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_gravity="bottom|right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:layout_margin="30dp"
+            android:src="@drawable/ic_chat_white_24dp" />
 
     </FrameLayout>
 
