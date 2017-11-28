@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package io.github.cmw025.nifty;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -24,34 +25,49 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.AdView;
+//import com.google.android.gms.appinvite.AppInvite;
+//import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.appindexing.FirebaseUserActions;
@@ -59,19 +75,18 @@ import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.appindexing.builders.PersonBuilder;
 import com.google.firebase.storage.FirebaseStorage;
-import android.view.ViewGroup;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import android.view.LayoutInflater;
-import io.github.cmw025.nifty.FriendlyMessage;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChattingActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
 
-    public static class MessageViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
         ImageView messageImageView;
         TextView messengerTextView;
@@ -85,8 +100,7 @@ public class ChattingActivity extends AppCompatActivity
             messengerImageView = (CircleImageView) itemView.findViewById(R.id.messengerImageView);
         }
     }
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+
     private static final String TAG = "ChattingActivity";
     public static final String MESSAGES_CHILD = "messages";
     private static final int REQUEST_INVITE = 1;
@@ -100,23 +114,48 @@ public class ChattingActivity extends AppCompatActivity
     private SharedPreferences mSharedPreferences;
     private GoogleApiClient mGoogleApiClient;
     private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
-    private DatabaseReference mFirebaseDatabaseReference;
-    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
+
     private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
     private ImageView mAddMessageImageView;
-
-
     // Firebase instance variables
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    // FireBase instance variables
+    private DatabaseReference mFirebaseDatabaseReference;
+    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>
+            mFirebaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Set up toolbar color
+//        Toolbar toolbar = findViewById(R.id.project_chat_toolbar);
+//        int realColor = getIntent().getIntExtra("color", 0);
+//        toolbar.setBackgroundColor(realColor);
+
+
+        // Set default username is anonymous.
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        } else {
+            mUsername = mFirebaseUser.getDisplayName();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+        }
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -125,11 +164,12 @@ public class ChattingActivity extends AppCompatActivity
 
         // Initialize ProgressBar and RecyclerView.
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mMessageRecyclerView = (RecyclerView) findViewById(R.id.messageRecyclerView);
+        mMessageRecyclerView = (RecyclerView) findViewById(R.id.motherrecycle);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
+        // New child entries
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         SnapshotParser<FriendlyMessage> parser = new SnapshotParser<FriendlyMessage>() {
             @Override
@@ -202,12 +242,7 @@ public class ChattingActivity extends AppCompatActivity
                             .load(friendlyMessage.getPhotoUrl())
                             .into(viewHolder.messengerImageView);
                 }
-                if (friendlyMessage.getText() != null) {
-                    // write this message to the on-device index
-                    FirebaseAppIndex.getInstance()
-                            .update(getMessageIndexable(friendlyMessage));
-                }
-                FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
+
             }
         };
 
@@ -278,11 +313,6 @@ public class ChattingActivity extends AppCompatActivity
                 startActivityForResult(intent, REQUEST_IMAGE);
             }
         });
-
-        // Initialize Firebase Auth
-        this.mFirebaseAuth= FirebaseAuth.getInstance();
-        this.mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
     }
 
     @Override
@@ -303,14 +333,16 @@ public class ChattingActivity extends AppCompatActivity
         super.onResume();
         mFirebaseAdapter.startListening();
     }
-    @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
 
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -358,9 +390,8 @@ public class ChattingActivity extends AppCompatActivity
         }
     }
 
-
     private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
-        storageReference.putFile(uri).addOnCompleteListener(this,
+        storageReference.putFile(uri).addOnCompleteListener(ChattingActivity.this,
                 new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -379,30 +410,7 @@ public class ChattingActivity extends AppCompatActivity
                 });
     }
 
-    private Indexable getMessageIndexable(FriendlyMessage friendlyMessage) {
-        PersonBuilder sender = Indexables.personBuilder()
-                .setIsSelf(mUsername.equals(friendlyMessage.getName()))
-                .setName(friendlyMessage.getName())
-                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId() + "/sender"));
-
-        PersonBuilder recipient = Indexables.personBuilder()
-                .setName(mUsername)
-                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId() + "/recipient"));
-
-        Indexable messageToIndex = Indexables.messageBuilder()
-                .setName(friendlyMessage.getText())
-                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId()))
-                .setSender(sender)
-                .setRecipient(recipient)
-                .build();
-
-        return messageToIndex;
-    }
-
-    private Action getMessageViewAction(FriendlyMessage friendlyMessage) {
-        return new Action.Builder(Action.Builder.VIEW_ACTION)
-                .setObject(friendlyMessage.getName(), MESSAGE_URL.concat(friendlyMessage.getId()))
-                .setMetadata(new Action.Metadata.Builder().setUpload(false))
-                .build();
+    public void goBack(View v) {
+        finish();
     }
 }
