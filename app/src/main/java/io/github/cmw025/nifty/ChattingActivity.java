@@ -135,10 +135,14 @@ public class ChattingActivity extends AppCompatActivity
         setContentView(R.layout.activity_chatting);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Set up toolbar color
-//        Toolbar toolbar = findViewById(R.id.project_chat_toolbar);
-//        int realColor = getIntent().getIntExtra("color", 0);
-//        toolbar.setBackgroundColor(realColor);
+        //Set up toolbar color
+        Toolbar toolbar = findViewById(R.id.project_chat_toolbar);
+        int realColor = getIntent().getIntExtra("realColor", 0);
+        toolbar.setBackgroundColor(realColor);
+
+        String projectName = getIntent().getStringExtra("projectName");
+        TextView tv = findViewById(R.id.project_title);
+        tv.setText(projectName);
 
 
         // Set default username is anonymous.
@@ -170,7 +174,9 @@ public class ChattingActivity extends AppCompatActivity
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         // New child entries
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        String projectFireBaseID = getIntent().getStringExtra("projectFireBaseID");
+
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child("projects").child(projectFireBaseID);
         SnapshotParser<FriendlyMessage> parser = new SnapshotParser<FriendlyMessage>() {
             @Override
             public FriendlyMessage parseSnapshot(DataSnapshot dataSnapshot) {

@@ -156,6 +156,9 @@ public class ProjectActivity extends FragmentActivity {
 
     public void startChat(View view) {
         Intent intent = new Intent(this, ChattingActivity.class);
+        intent.putExtra("projectFireBaseID", projectFireBaseID);
+        intent.putExtra("projectName", projectName);
+        intent.putExtra("realColor", realColor);
         startActivity(intent);
     }
 }

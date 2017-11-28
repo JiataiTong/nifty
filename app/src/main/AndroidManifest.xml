@@ -28,7 +28,8 @@
         <activity android:name=".ProjectActivity" />
         <activity android:name=".ProjectSettingsActivity" />
         <activity android:name=".InviteMemberActivity" />
-        <activity android:name=".ChattingActivity"></activity>
+        <activity android:name=".ChattingActivity" />
+        <activity android:name=".PersonalInfoActivity"></activity>
     </application>
 
 </manifest>

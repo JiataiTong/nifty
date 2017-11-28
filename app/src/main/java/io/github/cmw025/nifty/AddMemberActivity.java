@@ -48,6 +48,7 @@ public class AddMemberActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.add_member_toolbar);
         int realColor = getIntent().getIntExtra("color", 0);
         toolbar.setBackgroundColor(realColor);
+        String projectName = getIntent().getStringExtra("projectName");
 
         // Set up list adapter
         memberModels = new ArrayList();

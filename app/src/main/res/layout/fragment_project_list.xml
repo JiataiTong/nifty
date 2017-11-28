@@ -16,6 +16,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true">
             <ImageView
+                android:clickable="true"
+                android:id="@+id/sign_out"
                 android:layout_marginLeft="4dp"
                 android:layout_gravity="left"
                 android:layout_width="80dp"
