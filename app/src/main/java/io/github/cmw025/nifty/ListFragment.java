@@ -42,6 +42,7 @@ public class ListFragment extends Fragment {
     private String projectFireBaseID;
     private RecyclerViewAdapter adapter;
 
+
     // Assumming calling from inside project
     @Override
     public void onCreate(Bundle state) {
@@ -79,6 +80,8 @@ public class ListFragment extends Fragment {
         adapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(dragMgr.createWrappedAdapter(adapter));
 
+
+
         // Set up FireBase
         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -87,6 +90,7 @@ public class ListFragment extends Fragment {
         String userDisplayName = user.getDisplayName();
 
         DatabaseReference tasksRef = fb.child("projects").child(projectFireBaseID).child("tasks");
+
         tasksRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
@@ -97,6 +101,8 @@ public class ListFragment extends Fragment {
                 }
                 Collections.reverse(taskList);
                 adapter.updateItems(taskList);
+
+
             }
 
             @Override

@@ -124,7 +124,7 @@ public class ProjectActivity extends FragmentActivity {
                     fragment = new ListFragment();
                     break;
                 case 1:
-                    fragment = new ProjectInfoFragment();
+                    fragment = new ProjectContributionFragment();
                     break;
                 case 2:
                     fragment = new CalendarFragment();

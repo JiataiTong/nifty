@@ -83,8 +83,12 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ProjectListFragment();
                         // Intent intent = new Intent(MainActivity.this, ProjectActivity.class);
                         // myIntent.putExtra("key", value); //Optional parameters
-                        // startActivity(intent);
+                        // startActivity(intent)    ;
                         break;
+                    case 3:
+                        fragment = new ProjectContributionFragment();
+                        break;
+
                 }
                 if (fragment != null) {
                     FragmentManager fm = getSupportFragmentManager();

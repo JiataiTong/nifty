@@ -39,8 +39,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
-import com.nhaarman.listviewanimations.itemmanipulation.dragdrop.OnItemMovedListener;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.util.ArrayList;
@@ -49,8 +47,6 @@ import java.util.Date;
 import java.util.List;
 
 import it.gmariotti.cardslib.library.cards.topcolored.TopColoredCard;
-import it.gmariotti.cardslib.library.extra.dragdroplist.internal.CardDragDropArrayAdapter;
-import it.gmariotti.cardslib.library.extra.dragdroplist.view.CardListDragDropView;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardArrayAdapter;
 import it.gmariotti.cardslib.library.internal.CardHeader;
@@ -153,7 +149,7 @@ public class ProjectListFragment extends Fragment {
                                 }
                             });
 
-                            Snackbar undo = Snackbar.make(getActivity().findViewById(R.id.myList), "Removed " + project.getName(), Snackbar.LENGTH_LONG);
+                            Snackbar undo = Snackbar.make(getActivity().findViewById(R.id.placeSnackBar), "Removed " + project.getName(), Snackbar.LENGTH_LONG);
                             undo.setAction("UNDO", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

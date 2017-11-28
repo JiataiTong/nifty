@@ -135,6 +135,7 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         taskRef = fb.child("tasks").child(taskFireBaseKey);
 
+
         taskRef.child("finishedDate").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
@@ -159,6 +160,15 @@ public class TaskDetailActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot data) {
 
                 task = data.getValue(TaskModel.class);
+
+                if (task.getFinishDate() != null) {
+                    // Task is finished
+                    finished.setChecked(true);
+                }
+                else {
+                    inProg.setChecked(true);
+                }
+
 
                 projectFireBaseID = task.getProjectKey();
 
@@ -229,12 +239,15 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     }
 
-    private boolean isFinished() {
+    private boolean ifFinished() {
         if (inProg.isChecked()) {
             taskFinished = false;
+            task.setfinish(false);
         }
         if (finished.isChecked()) {
             taskFinished = true;
+            task.setfinish(true);
+
         }
         return taskFinished;
     }
@@ -283,23 +296,37 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void goBack(View view) {
         // Update changed to FireBase
         Date date = new Date(mYear - 1900, mMonth, mDay);
+        if (ifFinished()) {
+            task.finish();
+            task.setFinishDate(date);
+        }
+        else {
+            task.removeFinishDate();
+        }
+
+        taskRef.setValue(task);
         taskRef.child("name").setValue(taskName.getText().toString());
         taskRef.child("content").setValue(taskContent.getText().toString());
         taskRef.child("dueDate").setValue(date);
+        taskRef.child("members").setValue(new ArrayList(currentMembers));
 
         DatabaseReference taskRef2 = fb.child("projects").child(projectFireBaseID).child("tasks").child(taskFireBaseKey);
+        taskRef2.setValue(task);
         taskRef2.child("name").setValue(taskName.getText().toString());
         taskRef2.child("content").setValue(taskContent.getText().toString());
         taskRef2.child("dueDate").setValue(date);
+        taskRef2.child("members").setValue(new ArrayList(currentMembers));
 
-        if (isFinished()) {
+        if (ifFinished()) {
             Date today = new Date();
             Date newDate = new Date(today.getTime() + (604800000L *2 ) + (24 *60 *60));
             SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
             stringdate = dt.format(newDate);
 
-            taskRef.child("finishedDate").setValue(today);
-            taskRef2.child("finishedDate").setValue(today);
+            taskRef.child("finishedDate").setValue(stringdate);
+            taskRef2.child("finishedDate").setValue(stringdate);
+            //taskRef.child("finishedDate").setValue(today);
+            //taskRef2.child("finishedDate").setValue(today);
             taskRef.child("finished").setValue(true);
             taskRef2.child("finished").setValue(true);
         }
