@@ -153,6 +153,11 @@ public class ProjectActivity extends FragmentActivity {
         intent.putExtra("projectName", projectName);
         startActivity(intent);
     }
+
+    public void startChat(View view) {
+        Intent intent = new Intent(this, ChattingActivity.class);
+        startActivity(intent);
+    }
 }
 
 

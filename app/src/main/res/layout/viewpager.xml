@@ -78,7 +78,8 @@
             android:layout_weight="1"
             android:clickable="true"
             android:layout_margin="30dp"
-            android:src="@drawable/ic_chat_white_24dp" />
+            android:src="@drawable/ic_chat_white_24dp"
+            android:onClick="startChat"/>
 
     </FrameLayout>
 
