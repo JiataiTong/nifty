@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,15 +62,25 @@ public class TaskDetailActivity extends AppCompatActivity {
     private String projectFireBaseKey;
     private String uid;
 
+    private boolean taskFinished;
     private int realColor;
 
     private HashSet<MemberModel> currentMembers;
+
+    private RadioButton inProg;
+    private RadioButton finished;
+    private String stringdate;
+
+    private TaskModel task;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
+        inProg = findViewById(R.id.inprog);
+        finished = findViewById(R.id.finished);
 
         taskName = (EditText) findViewById(R.id.fragment_note_title);
         taskContent = (EditText) findViewById(R.id.task_content);
@@ -123,10 +135,30 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         taskRef = fb.child("tasks").child(taskFireBaseKey);
 
+        taskRef.child("finishedDate").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    // Task is finished
+                    finished.setChecked(true);
+                }
+                else {
+                    inProg.setChecked(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot data) {
-                TaskModel task = data.getValue(TaskModel.class);
+
+                task = data.getValue(TaskModel.class);
 
                 projectFireBaseID = task.getProjectKey();
 
@@ -193,42 +225,19 @@ public class TaskDetailActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
-//    TextWatcher mTextWatcher = new TextWatcher() {
-//        private CharSequence temp;
-//        private int editStart;
-//        private int editEnd;
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            // TODO Auto-generated method stub
-//            temp = s;
-//        }
-//
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count,
-//                                      int after) {
-//            // TODO Auto-generated method stub
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//            // TODO Auto-generated method stub
-//            editStart = taskContent.getSelectionStart();
-//            editEnd = taskContent.getSelectionEnd();
-//            mTextView.setText(temp.length() + " letters input");
-//            if (temp.length() > 2000) {
-//                Toast.makeText(TaskDetailActivity.this,
-//                        "the note is too long!", Toast.LENGTH_SHORT)
-//                        .show();
-//                s.delete(editStart - 1, editEnd);
-//                int tempSelection = editStart;
-//                taskContent.setText(s);
-//                taskContent.setSelection(tempSelection);
-//            }
-//        }
-//    };
+    private boolean isFinished() {
+        if (inProg.isChecked()) {
+            taskFinished = false;
+        }
+        if (finished.isChecked()) {
+            taskFinished = true;
+        }
+        return taskFinished;
+    }
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -283,6 +292,23 @@ public class TaskDetailActivity extends AppCompatActivity {
         taskRef2.child("content").setValue(taskContent.getText().toString());
         taskRef2.child("dueDate").setValue(date);
 
+        if (isFinished()) {
+            Date today = new Date();
+            Date newDate = new Date(today.getTime() + (604800000L *2 ) + (24 *60 *60));
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            stringdate = dt.format(newDate);
+
+            taskRef.child("finishedDate").setValue(today);
+            taskRef2.child("finishedDate").setValue(today);
+            taskRef.child("finished").setValue(true);
+            taskRef2.child("finished").setValue(true);
+        }
+        else {
+            taskRef.child("finishedDate").removeValue();
+            taskRef2.child("finishedDate").removeValue();
+            taskRef.child("finished").setValue(false);
+            taskRef2.child("finished").setValue(false);
+        }
         fb.child("usrs").child(uid).child("tasks").child(taskFireBaseKey).child("name").setValue(taskName.getText().toString());
 
         finish();
