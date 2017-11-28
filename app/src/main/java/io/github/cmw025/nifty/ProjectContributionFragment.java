@@ -81,20 +81,21 @@ public class ProjectContributionFragment extends Fragment {
             public void onDataChange(DataSnapshot data) {
                 for (DataSnapshot data1 : data.getChildren()) {
                     TaskModel task = data1.getValue(TaskModel.class);
-                    Date date = new Date();
-                    check.add(date);
+
                     if (task.isFinished()) {
                         finishedDates.add(task.getFinishDate());
                     }
                 }
 
                 ArrayList<String> finishDatetoStr = new ArrayList<>();
-                for (int i = 0 ; i < finishedDates.size();i++){
-                    Date today = finishedDates.get(i);
-                    Date newDate = new Date(today.getTime() + (604800000L *2 ) + (24 *60 *60));
-                    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-                    String stringdate = dt.format(newDate);
-                    finishDatetoStr.add(stringdate);
+                if (!finishedDates.isEmpty()) {
+                    for (int i = 0; i < finishedDates.size(); i++) {
+                        Date today = finishedDates.get(i);
+                        Date newDate = new Date(today.getTime() + (604800000L * 2) + (24 * 60 * 60));
+                        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+                        String stringdate = dt.format(newDate);
+                        finishDatetoStr.add(stringdate);
+                    }
                 }
 
 
