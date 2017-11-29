@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.cmw025.nifty.PersonalInfoActivity"
+    android:background="#2a63ADC7">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/project_chat_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/dark_gray_darker">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            android:showDividers="end"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_close_white_24dp"
+                android:paddingStart="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingEnd="16dp"
+                android:layout_gravity="start"
+                android:onClick="goBack"/>
+            <TextView
+                android:id="@+id/project_title"
+                style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical|start"
+                android:textAlignment="textStart"
+                android:text="Personal Info"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:inputType="textNoSuggestions"
+                android:imeOptions="actionDone"
+                android:freezesText="true" />
+
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:layout_margin="20dp"
+        android:layout_gravity="center"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:src="@drawable/ic_account_circle_black_36dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="User Name"
+        android:textStyle="bold"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="User Name"
+        android:textAlignment="center"
+        android:textSize="40sp" />
+
+    <TextView
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="Email"
+        android:textStyle="bold"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="askdjhaslj@gmail.com"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <Button
+        android:textStyle="bold"
+        android:id="@+id/sign_out_btn"
+        android:textColor="#FFFFFF"
+        android:text="Sign Out"
+        android:textSize="20sp"
+        android:layout_gravity="bottom"
+        android:layout_margin="50dp"
+        android:background="@color/light_red"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+</LinearLayout>

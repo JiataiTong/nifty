@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "95273199651",
+    "firebase_url": "https://nifty-b227c.firebaseio.com",
+    "project_id": "nifty-b227c",
+    "storage_bucket": "nifty-b227c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95273199651:android:e747cef081b14ad6",
+        "android_client_info": {
+          "package_name": "io.github.cmw025.nifty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95273199651-ehbnn76eckaescdbpri13de9l777p7f6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.cmw025.nifty",
+            "certificate_hash": "ae2ec5ceaa228b4706a4f6a472c4aa1e72c0224d"
+          }
+        },
+        {
+          "client_id": "95273199651-do2msdbs347mm2d190cff6ab71h59ehv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9xGl6qfRAxo-U6tjvbra4yxOqinAxGww"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95273199651-do2msdbs347mm2d190cff6ab71h59ehv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,79 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="io.github.cmw025.nifty.ProcessFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Progress"
+            android:textSize="30dp"/>
+
+        <me.itangqi.waveloadingview.WaveLoadingView
+            android:id="@+id/waveLoadingView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:wlv_borderColor="@color/colorAccent"
+            app:wlv_borderWidth="3dp"
+            app:wlv_progressValue="40"
+            app:wlv_round_rectangle="true"
+            app:wlv_shapeType="circle"
+            app:wlv_titleCenter="Center Title"
+            app:wlv_titleCenterColor="@color/colorPrimaryText"
+            app:wlv_titleCenterSize="24sp"
+            app:wlv_triangle_direction="north"
+            app:wlv_waveAmplitude="70"
+            app:wlv_waveColor="@color/colorAccent"/>
+
+    </LinearLayout>
+
+
+
+
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_margin="10dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_shape_type"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="center_vertical"
+                android:text="Shape Type:"
+                android:textColor="@color/colorPrimaryText"/>
+
+            <TextView
+                android:id="@+id/tv_shape"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignTop="@+id/tv_shape_type"
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@id/tv_shape_type"
+                android:gravity="center_vertical"
+                android:text="Click me to change shape type"
+                android:textColor="@color/colorAccent"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>
