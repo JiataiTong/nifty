@@ -53,12 +53,6 @@ public class ProjectActivity extends FragmentActivity {
 
         setContentView(R.layout.viewpager);
         TextView display = findViewById(R.id.project_name);
-        display.post(new Runnable(){
-            @Override
-            public void run() {
-                display.setText(projectName);
-            }
-        });
 
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
@@ -83,6 +77,26 @@ public class ProjectActivity extends FragmentActivity {
                     int projectColor = (int) l;
                     realColor = ContextCompat.getColor(ProjectActivity.this, projectColor);
                     toolbar.setBackgroundColor(ContextCompat.getColor(ProjectActivity.this, projectColor));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        fb.child("projects").child(projectFireBaseID).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot data) {
+                if (data.getValue() != null) {
+                    projectName = (String) data.getValue();
+                    display.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            display.setText(projectName);
+                        }
+                    });
                 }
             }
 
