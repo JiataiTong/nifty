@@ -344,8 +344,10 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
             ArrayList<TaskModel> tasksOnSelectedDay = new ArrayList<>();
             for (TaskModel task: tasks) {
                 CalendarDay day = CalendarDay.from(task.getDueDate());
-                if (day.equals(date)) {
-                    tasksOnSelectedDay.add(task);
+                if (day != null) {
+                    if (day.equals(date)) {
+                        tasksOnSelectedDay.add(task);
+                    }
                 }
             }
             recyclerViewAdapter.updateItems(tasksOnSelectedDay);

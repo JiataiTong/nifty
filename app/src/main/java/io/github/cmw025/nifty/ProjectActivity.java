@@ -25,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import me.relex.circleindicator.CircleIndicator;
 
 public class ProjectActivity extends FragmentActivity {
-    private static final int NUM_PAGES = 4;
+    private static final int NUM_PAGES = 3;
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -127,10 +127,7 @@ public class ProjectActivity extends FragmentActivity {
                     fragment = new ProjectContributionFragment();
                     break;
                 case 2:
-                    fragment = new CalendarFragment();
-                    break;
-                case 3:
-                    fragment = new ProjectInfoFragment();
+                    fragment = new ListFragment();
                     break;
             }
             return fragment;

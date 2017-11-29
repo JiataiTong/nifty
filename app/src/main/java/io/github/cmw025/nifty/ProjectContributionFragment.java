@@ -6,6 +6,7 @@ package io.github.cmw025.nifty;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,13 +48,10 @@ public class ProjectContributionFragment extends Fragment {
     private ValueLineChart linech;
 
     private ArrayList<Date> finishedDates;
-    private ArrayList<Date> check;
 
     public ProjectContributionFragment(){
 
     }
-
-
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,15 +68,15 @@ public class ProjectContributionFragment extends Fragment {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         linech = (ValueLineChart) activity.findViewById(R.id.linechart);
-        check = new ArrayList<>();
         finishedDates = new ArrayList<>();
 
         fb = FirebaseDatabase.getInstance().getReference();
-        fb.child("projects").child(projectFireBaseID).child("tasks").addValueEventListener(new ValueEventListener() {
+        fb.child("projects").child(projectFireBaseID).child("tasks").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
 
             public void onDataChange(DataSnapshot data) {
+
                 for (DataSnapshot data1 : data.getChildren()) {
                     TaskModel task = data1.getValue(TaskModel.class);
 
@@ -88,17 +86,14 @@ public class ProjectContributionFragment extends Fragment {
                 }
 
                 ArrayList<String> finishDatetoStr = new ArrayList<>();
-                if (!finishedDates.isEmpty()) {
-                    for (int i = 0; i < finishedDates.size(); i++) {
-                        Date today = finishedDates.get(i);
-                        Date newDate = new Date(today.getTime() + (604800000L * 2) + (24 * 60 * 60));
-                        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-                        String stringdate = dt.format(newDate);
-                        finishDatetoStr.add(stringdate);
-                    }
+
+                for (int i = 0; i < finishedDates.size(); i++) {
+                    Date today = finishedDates.get(i);
+                    Date newDate = new Date(today.getTime() + (604800000L * 2) + (24 * 60 * 60));
+                    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+                    String stringdate = dt.format(newDate);
+                    finishDatetoStr.add(stringdate);
                 }
-
-
 
                 Collections.sort(finishDatetoStr, new Comparator<String>() {
 
